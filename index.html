@@ -346,9 +346,9 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
         <p class="dir-subtitle" id="dirSubtitle">Piel de Ubrique</p>
         <div class="stats-bar">
           <div class="stat"><span class="stat-n" id="statTotal">—</span><span class="stat-label">Empresas</span></div>
-          <div class="stat"><span class="stat-n" id="statAsocFab">—</span><span class="stat-label">Asoc. Fabricantes</span></div>
-          <div class="stat"><span class="stat-n" id="statNoAsocFab">—</span><span class="stat-label">No Asoc. Fabricantes</span></div>
-          <div class="stat"><span class="stat-n" id="statAux">—</span><span class="stat-label">Auxiliares</span></div>
+          <div class="stat"><span class="stat-n" id="statFab">—</span><span class="stat-label">Fabricantes</span></div>
+          <div class="stat"><span class="stat-n" id="statTaller">—</span><span class="stat-label">Talleres</span></div>
+          <div class="stat"><span class="stat-n" id="statProv">—</span><span class="stat-label">Proveedores</span></div>
           <div class="stat"><span class="stat-n" id="statServ">—</span><span class="stat-label">Servicios</span></div>
         </div>
       </div>
@@ -362,10 +362,13 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
         <div class="filter-select">
           <select id="filtroCategoria" onchange="renderEmpresas()">
             <option value="">Todas las categorías</option>
-            <option value="asociado-fabricante">Asociados Asopiel fabricantes</option>
-            <option value="no-asociado-fabricante">No asociados fabricantes</option>
-            <option value="auxiliar">Auxiliares</option>
-            <option value="servicios">Servicios</option>
+            <option value="asociado-fabricante">Fabricantes (asociados Asopiel)</option>
+            <option value="no-asociado-fabricante">Fabricantes (no asociados)</option>
+            <option value="asociado-taller">Taller auxiliar (asociado Asopiel)</option>
+            <option value="no-asociado-taller">Taller auxiliar (no asociado)</option>
+            <option value="asociado-proveedor">Proveedores (asociados Asopiel)</option>
+            <option value="no-asociado-proveedor">Proveedores (no asociados)</option>
+            <option value="servicios">Servicios a empresas</option>
           </select>
         </div>
         <div class="filter-select">
@@ -415,40 +418,55 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
         <div class="form-section">
           <p class="section-label">2 · Tipo de empresa</p>
           <div class="tipo-empresa-group">
-            <div class="tipo-option"><input type="radio" name="tipo" id="t_asoc_fab" value="asociado-fabricante" onchange="onTipoChange()"><label for="t_asoc_fab"><span class="tipo-icon">🏭</span>Asociado Asopiel fabricante</label></div>
-            <div class="tipo-option"><input type="radio" name="tipo" id="t_noasoc_fab" value="no-asociado-fabricante" onchange="onTipoChange()"><label for="t_noasoc_fab"><span class="tipo-icon">🏗️</span>No asociado fabricante</label></div>
-            <div class="tipo-option"><input type="radio" name="tipo" id="t_aux" value="auxiliar" onchange="onTipoChange()"><label for="t_aux"><span class="tipo-icon">🔧</span>Auxiliar del sector</label></div>
+            <div class="tipo-option"><input type="radio" name="tipo" id="t_fab" value="fabricante" onchange="onTipoChange()"><label for="t_fab"><span class="tipo-icon">🏭</span>Fabricante</label></div>
+            <div class="tipo-option"><input type="radio" name="tipo" id="t_taller" value="taller-auxiliar" onchange="onTipoChange()"><label for="t_taller"><span class="tipo-icon">🔧</span>Taller auxiliar</label></div>
+            <div class="tipo-option"><input type="radio" name="tipo" id="t_prov" value="proveedor" onchange="onTipoChange()"><label for="t_prov"><span class="tipo-icon">📦</span>Proveedor</label></div>
             <div class="tipo-option"><input type="radio" name="tipo" id="t_serv" value="servicios" onchange="onTipoChange()"><label for="t_serv"><span class="tipo-icon">💼</span>Servicios a empresas</label></div>
           </div>
         </div>
         <div class="form-section" id="secActividades" style="display:none">
           <p class="section-label">3 · Actividades</p>
           <div class="actividades-group" id="actFabricante">
-            <label class="check-option"><input type="checkbox" value="Montaje pequeña marroquinería"> Montaje pequeña marroquinería</label>
-            <label class="check-option"><input type="checkbox" value="Montaje bolsos"> Montaje bolsos</label>
+            <label class="check-option"><input type="checkbox" value="Pequeña marroquinería"> Pequeña marroquinería</label>
+            <label class="check-option"><input type="checkbox" value="Bolsos"> Bolsos</label>
+            <label class="check-option"><input type="checkbox" value="Otro producto"> Otro producto</label>
+          </div>
+          <div class="actividades-group" id="actTaller">
+            <label class="check-option"><input type="checkbox" value="Patronaje"> Patronaje</label>
+            <label class="check-option"><input type="checkbox" value="Diseño"> Diseño</label>
             <label class="check-option"><input type="checkbox" value="Corte"> Corte</label>
             <label class="check-option"><input type="checkbox" value="Rebaje"> Rebaje</label>
-            <label class="check-option"><input type="checkbox" value="Pintura"> Pintura</label>
             <label class="check-option"><input type="checkbox" value="Dividido"> Dividido</label>
+            <label class="check-option"><input type="checkbox" value="Pintura y tinte"> Pintura y tinte</label>
             <label class="check-option"><input type="checkbox" value="Empaste"> Empaste</label>
+            <label class="check-option"><input type="checkbox" value="Costura"> Costura</label>
+            <label class="check-option"><input type="checkbox" value="Grabado"> Grabado</label>
+            <label class="check-option"><input type="checkbox" value="Timbrado"> Timbrado</label>
+            <label class="check-option"><input type="checkbox" value="Troquelado"> Troquelado</label>
             <label class="check-option"><input type="checkbox" value="Arrematado"> Arrematado</label>
+            <label class="check-option"><input type="checkbox" value="Otra categoría"> Otra categoría</label>
           </div>
-          <div class="actividades-group" id="actAuxiliar">
-            <label class="check-option"><input type="checkbox" value="Distribuidor de pieles"> Distribuidor de pieles</label>
-            <label class="check-option"><input type="checkbox" value="Fornituras, herrajes y accesorios"> Fornituras y herrajes</label>
-            <label class="check-option"><input type="checkbox" value="Maquinaria"> Maquinaria</label>
-            <label class="check-option"><input type="checkbox" value="Envases, embalajes y suministros auxiliares"> Envases y embalajes</label>
+          <div class="actividades-group" id="actProveedor">
+            <label class="check-option"><input type="checkbox" value="Pieles"> Pieles</label>
+            <label class="check-option"><input type="checkbox" value="Sintéticos y refuerzos"> Sintéticos y refuerzos</label>
+            <label class="check-option"><input type="checkbox" value="Fornituras y herrajes"> Fornituras y herrajes</label>
+            <label class="check-option"><input type="checkbox" value="Envases y embalaje"> Envases y embalaje</label>
             <label class="check-option"><input type="checkbox" value="Packaging"> Packaging</label>
-            <label class="check-option"><input type="checkbox" value="Proveedores pegamentos y químicos"> Pegamentos y químicos</label>
-            <label class="check-option"><input type="checkbox" value="Mensajería"> Mensajería</label>
+            <label class="check-option"><input type="checkbox" value="Suministros y pegamentos"> Suministros y pegamentos</label>
+            <label class="check-option"><input type="checkbox" value="Maquinaria"> Maquinaria</label>
+            <label class="check-option"><input type="checkbox" value="Mensajería y logística"> Mensajería y logística</label>
+            <label class="check-option"><input type="checkbox" value="Otro material"> Otro material</label>
           </div>
           <div class="actividades-group" id="actServicios">
             <label class="check-option"><input type="checkbox" value="Gestoría / Asesoría"> Gestoría / Asesoría</label>
             <label class="check-option"><input type="checkbox" value="Soporte informático"> Soporte informático</label>
-            <label class="check-option"><input type="checkbox" value="Productora de vídeo y foto"> Productora vídeo y foto</label>
+            <label class="check-option"><input type="checkbox" value="Productora de vídeo"> Productora de vídeo</label>
+            <label class="check-option"><input type="checkbox" value="Productora de fotos"> Productora de fotos</label>
             <label class="check-option"><input type="checkbox" value="Marketing"> Marketing</label>
-            <label class="check-option"><input type="checkbox" value="Traducción e interpretación"> Traducción</label>
+            <label class="check-option"><input type="checkbox" value="Traducción"> Traducción</label>
             <label class="check-option"><input type="checkbox" value="Intermediación"> Intermediación</label>
+            <label class="check-option"><input type="checkbox" value="Eventos"> Eventos</label>
+            <label class="check-option"><input type="checkbox" value="Otra categoría"> Otra categoría</label>
           </div>
         </div>
         <div class="form-section">
@@ -597,9 +615,12 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
     <div class="modal-body">
       <p style="font-size:13px;color:var(--ink-mid);margin-bottom:14px">Selecciona las categorías del directorio a las que esta marca tendrá acceso. Se generarán credenciales automáticamente.</p>
       <div class="permisos-grid">
-        <label class="permiso-check"><input type="checkbox" id="perm_asoc_fab" value="asociado-fabricante"> Asociados Asopiel fabricantes</label>
-        <label class="permiso-check"><input type="checkbox" id="perm_noasoc_fab" value="no-asociado-fabricante"> No asociados fabricantes</label>
-        <label class="permiso-check"><input type="checkbox" id="perm_aux" value="auxiliar"> Auxiliares del sector</label>
+        <label class="permiso-check"><input type="checkbox" id="perm_asoc_fab" value="asociado-fabricante"> Fabricantes (asociados Asopiel)</label>
+        <label class="permiso-check"><input type="checkbox" id="perm_noasoc_fab" value="no-asociado-fabricante"> Fabricantes (no asociados)</label>
+        <label class="permiso-check"><input type="checkbox" id="perm_asoc_taller" value="asociado-taller"> Talleres auxiliares (asociados Asopiel)</label>
+        <label class="permiso-check"><input type="checkbox" id="perm_noasoc_taller" value="no-asociado-taller"> Talleres auxiliares (no asociados)</label>
+        <label class="permiso-check"><input type="checkbox" id="perm_asoc_prov" value="asociado-proveedor"> Proveedores (asociados Asopiel)</label>
+        <label class="permiso-check"><input type="checkbox" id="perm_noasoc_prov" value="no-asociado-proveedor"> Proveedores (no asociados)</label>
         <label class="permiso-check"><input type="checkbox" id="perm_serv" value="servicios"> Servicios a empresas</label>
       </div>
       <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end">
@@ -717,7 +738,7 @@ function iniciarSesion(data) {
   document.getElementById('navRegistro').style.display = currentUser.rol === 'admin' ? '' : 'none';
   // Subtítulo directorio para marca
   if (currentUser.rol === 'marca' && currentUser.permisos) {
-    const cats = { 'asociado-fabricante': 'Asoc. Fabricantes', 'no-asociado-fabricante': 'No Asoc. Fabricantes', 'auxiliar': 'Auxiliares', 'servicios': 'Servicios' };
+    const cats = { 'asociado-fabricante': 'Fabricantes Asopiel', 'no-asociado-fabricante': 'Fabricantes', 'asociado-taller': 'Talleres Asopiel', 'no-asociado-taller': 'Talleres', 'asociado-proveedor': 'Proveedores Asopiel', 'no-asociado-proveedor': 'Proveedores', 'servicios': 'Servicios' };
     document.getElementById('dirSubtitle').textContent = 'Acceso a: ' + currentUser.permisos.map(p => cats[p] || p).join(' · ');
   }
   cargarDirectorio();
@@ -780,9 +801,9 @@ async function cargarDirectorio() {
 
 function updateStats() {
   document.getElementById('statTotal').textContent = empresasData.length;
-  document.getElementById('statAsocFab').textContent = empresasData.filter(e => e.categoria === 'asociado-fabricante').length;
-  document.getElementById('statNoAsocFab').textContent = empresasData.filter(e => e.categoria === 'no-asociado-fabricante').length;
-  document.getElementById('statAux').textContent = empresasData.filter(e => e.categoria === 'auxiliar').length;
+  document.getElementById('statFab').textContent = empresasData.filter(e => ['asociado-fabricante','no-asociado-fabricante'].includes(e.categoria)).length;
+  document.getElementById('statTaller').textContent = empresasData.filter(e => ['asociado-taller','no-asociado-taller'].includes(e.categoria)).length;
+  document.getElementById('statProv').textContent = empresasData.filter(e => ['asociado-proveedor','no-asociado-proveedor'].includes(e.categoria)).length;
   document.getElementById('statServ').textContent = empresasData.filter(e => e.categoria === 'servicios').length;
 }
 
@@ -795,22 +816,31 @@ function populateActividadesFilter() {
 }
 
 const CAT_LABEL = {
-  'asociado-fabricante': 'Asoc. Asopiel Fabricante',
+  'asociado-fabricante':    'Fabricante · Asopiel',
   'no-asociado-fabricante': 'Fabricante',
-  'auxiliar': 'Auxiliar del Sector',
-  'servicios': 'Servicios'
+  'asociado-taller':        'Taller auxiliar · Asopiel',
+  'no-asociado-taller':     'Taller auxiliar',
+  'asociado-proveedor':     'Proveedor · Asopiel',
+  'no-asociado-proveedor':  'Proveedor',
+  'servicios':              'Servicios'
 };
 const CAT_BADGE = {
-  'asociado-fabricante': 'badge-asoc-fab',
+  'asociado-fabricante':    'badge-asoc-fab',
   'no-asociado-fabricante': 'badge-noasoc-fab',
-  'auxiliar': 'badge-aux',
-  'servicios': 'badge-serv'
+  'asociado-taller':        'badge-aux',
+  'no-asociado-taller':     'badge-aux',
+  'asociado-proveedor':     'badge-aux',
+  'no-asociado-proveedor':  'badge-aux',
+  'servicios':              'badge-serv'
 };
 const CAT_AVATAR = {
-  'asociado-fabricante': 'cat-asociado-fabricante',
+  'asociado-fabricante':    'cat-asociado-fabricante',
   'no-asociado-fabricante': 'cat-no-asociado-fabricante',
-  'auxiliar': 'cat-auxiliar',
-  'servicios': 'cat-servicios'
+  'asociado-taller':        'cat-auxiliar',
+  'no-asociado-taller':     'cat-auxiliar',
+  'asociado-proveedor':     'cat-auxiliar',
+  'no-asociado-proveedor':  'cat-auxiliar',
+  'servicios':              'cat-servicios'
 };
 
 function renderEmpresas() {
@@ -897,9 +927,10 @@ function showContact(id) { const e = empresasData.find(x => x.id === id); if(e) 
 function onTipoChange() {
   const t = document.querySelector('input[name="tipo"]:checked')?.value;
   document.getElementById('secActividades').style.display = t ? '' : 'none';
-  ['actFabricante','actAuxiliar','actServicios'].forEach(id => document.getElementById(id).className = 'actividades-group');
-  if (t === 'asociado-fabricante' || t === 'no-asociado-fabricante') document.getElementById('actFabricante').className = 'actividades-group visible';
-  else if (t === 'auxiliar') document.getElementById('actAuxiliar').className = 'actividades-group visible';
+  ['actFabricante','actTaller','actProveedor','actServicios'].forEach(id => document.getElementById(id).className = 'actividades-group');
+  if (t === 'fabricante') document.getElementById('actFabricante').className = 'actividades-group visible';
+  else if (t === 'taller-auxiliar') document.getElementById('actTaller').className = 'actividades-group visible';
+  else if (t === 'proveedor') document.getElementById('actProveedor').className = 'actividades-group visible';
   else if (t === 'servicios') document.getElementById('actServicios').className = 'actividades-group visible';
 }
 
@@ -1024,14 +1055,14 @@ async function cargarMarcas() {
 function abrirAprobarMarca(id, nombre) {
   pendingMarcaId = id;
   document.getElementById('modalMarcaNombre').textContent = nombre;
-  ['perm_asoc_fab','perm_noasoc_fab','perm_aux','perm_serv'].forEach(id => document.getElementById(id).checked = false);
+  ['perm_asoc_fab','perm_noasoc_fab','perm_asoc_taller','perm_noasoc_taller','perm_asoc_prov','perm_noasoc_prov','perm_serv'].forEach(id => document.getElementById(id).checked = false);
   document.getElementById('modalAprobarMarca').classList.add('open');
 }
 
 function closeModalAprobar(e) { if (e.target === document.getElementById('modalAprobarMarca')) document.getElementById('modalAprobarMarca').classList.remove('open'); }
 
 async function confirmarAprobarMarca() {
-  const permisos = ['perm_asoc_fab','perm_noasoc_fab','perm_aux','perm_serv']
+  const permisos = ['perm_asoc_fab','perm_noasoc_fab','perm_asoc_taller','perm_noasoc_taller','perm_asoc_prov','perm_noasoc_prov','perm_serv']
     .filter(id => document.getElementById(id).checked)
     .map(id => document.getElementById(id).value);
   if (!permisos.length) { showToast('⚠️ Selecciona al menos una categoría.', true); return; }
@@ -1111,7 +1142,7 @@ async function cargarUsuarios() {
   try {
     const data = await apiFetch('/usuarios');
     if (!data.ok) return;
-    const cats = { 'asociado-fabricante': 'Asoc.Fab', 'no-asociado-fabricante': 'NoAsoc.Fab', 'auxiliar': 'Aux', 'servicios': 'Serv' };
+    const cats = { 'asociado-fabricante': 'Fab.Asopiel', 'no-asociado-fabricante': 'Fabricante', 'asociado-taller': 'Taller Asopiel', 'no-asociado-taller': 'Taller', 'asociado-proveedor': 'Prov.Asopiel', 'no-asociado-proveedor': 'Proveedor', 'servicios': 'Servicios' };
     const roles = { admin: 'Admin', empresa: 'Empresa', marca: 'Marca', consulta: 'Consulta' };
     const tbody = document.getElementById('tablaUsuarios');
     tbody.innerHTML = data.data.map(u => `
