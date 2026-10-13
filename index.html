@@ -234,6 +234,85 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(22px, 3.5vw, 38px); font-weight: 700; color: white; line-height: 1.2; max-width: 560px; margin: 0 auto 14px; }
 .hero-desc { font-size: 14px; color: rgba(255,255,255,0.5); max-width: 500px; margin: 0 auto; font-weight: 300; line-height: 1.8; }
 
+/* LANDING */
+.landing-wrapper { min-height: 100vh; display: flex; flex-direction: column; background: var(--ink); }
+.landing-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 32px 60px; text-align: center; position: relative; overflow: hidden; }
+.landing-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 60% 40%, rgba(43,107,74,0.25) 0%, transparent 65%), radial-gradient(ellipse at 20% 80%, rgba(61,138,96,0.12) 0%, transparent 55%); pointer-events: none; }
+.landing-hero::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent 0%, rgba(61,138,96,0.5) 40%, rgba(93,214,138,0.7) 50%, rgba(61,138,96,0.5) 60%, transparent 100%); }
+.landing-eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(93,214,138,0.75); border: 1px solid rgba(61,138,96,0.35); padding: 6px 16px; border-radius: 2px; margin-bottom: 28px; }
+.landing-eyebrow::before, .landing-eyebrow::after { content: ''; display: block; width: 20px; height: 1px; background: rgba(93,214,138,0.4); }
+.landing-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 5vw, 58px); font-weight: 700; color: white; line-height: 1.12; max-width: 820px; margin: 0 auto 28px; letter-spacing: -0.01em; }
+.landing-title em { font-style: italic; color: #5CD68A; }
+.landing-body { font-size: clamp(13px, 1.5vw, 15px); color: rgba(255,255,255,0.52); max-width: 640px; margin: 0 auto 48px; line-height: 1.85; font-weight: 300; }
+.landing-body p + p { margin-top: 1em; }
+.landing-cta-group { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 56px; }
+.btn-landing-primary { padding: 14px 30px; background: #5CD68A; color: var(--ink); border: none; border-radius: var(--radius); font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; transition: all 0.18s; }
+.btn-landing-primary:hover { background: white; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,0,0,0.2); }
+.btn-landing-outline { padding: 14px 30px; background: transparent; color: rgba(255,255,255,0.75); border: 1px solid rgba(255,255,255,0.22); border-radius: var(--radius); font-family: var(--font); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; cursor: pointer; transition: all 0.18s; }
+.btn-landing-outline:hover { border-color: white; color: white; background: rgba(255,255,255,0.05); }
+.landing-scroll-hint { font-size: 10px; color: rgba(255,255,255,0.25); letter-spacing: 0.12em; text-transform: uppercase; animation: pulse 2.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+
+/* NEWSLETTER STRIP */
+.newsletter-strip { background: #111D17; border-top: 1px solid rgba(61,138,96,0.25); padding: 48px 32px; }
+.newsletter-inner { max-width: 900px; margin: 0 auto; }
+.newsletter-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(93,214,138,0.65); margin-bottom: 10px; }
+.newsletter-title { font-family: 'Playfair Display', serif; font-size: clamp(18px, 2.5vw, 26px); font-weight: 700; color: white; margin-bottom: 6px; }
+.newsletter-sub { font-size: 13px; color: rgba(255,255,255,0.42); margin-bottom: 28px; line-height: 1.6; }
+.newsletter-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.newsletter-card { background: rgba(255,255,255,0.035); border: 1px solid rgba(61,138,96,0.22); border-radius: var(--radius-lg); padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; transition: border-color 0.2s; }
+.newsletter-card:hover { border-color: rgba(93,214,138,0.45); }
+.newsletter-card-icon { font-size: 22px; }
+.newsletter-card-title { font-size: 13px; font-weight: 700; color: white; line-height: 1.3; }
+.newsletter-card-desc { font-size: 11px; color: rgba(255,255,255,0.42); line-height: 1.6; flex: 1; }
+.btn-newsletter { display: inline-flex; align-items: center; gap: 7px; padding: 10px 18px; background: rgba(93,214,138,0.12); border: 1px solid rgba(93,214,138,0.3); border-radius: var(--radius); color: #5CD68A; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; font-family: var(--font); text-decoration: none; transition: all 0.18s; width: fit-content; }
+.btn-newsletter:hover { background: rgba(93,214,138,0.22); border-color: #5CD68A; }
+.landing-login-bar { background: var(--ink); border-top: 1px solid rgba(255,255,255,0.07); padding: 20px 32px; text-align: center; }
+.landing-login-bar p { font-size: 13px; color: rgba(255,255,255,0.4); }
+.landing-login-bar a { color: #5CD68A; font-weight: 600; cursor: pointer; text-decoration: none; }
+.landing-login-bar a:hover { color: white; }
+
+/* BANNER NEWSLETTER INTRANET */
+.newsletter-banner { background: var(--ink); border-bottom: 2px solid var(--verde-light); padding: 0; }
+.newsletter-banner-inner { max-width: 1200px; margin: 0 auto; padding: 18px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
+.newsletter-banner-text { display: flex; align-items: center; gap: 14px; }
+.newsletter-banner-icon { font-size: 20px; flex-shrink: 0; }
+.newsletter-banner-copy { display: flex; flex-direction: column; gap: 2px; }
+.newsletter-banner-label { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(93,214,138,0.7); }
+.newsletter-banner-title { font-size: 13px; font-weight: 600; color: white; }
+.newsletter-banner-desc { font-size: 11px; color: rgba(255,255,255,0.45); }
+.btn-newsletter-banner { display: inline-flex; align-items: center; gap: 7px; padding: 9px 18px; background: rgba(93,214,138,0.1); border: 1px solid rgba(93,214,138,0.35); border-radius: var(--radius); color: #5CD68A; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; font-family: var(--font); text-decoration: none; transition: all 0.18s; white-space: nowrap; flex-shrink: 0; }
+.btn-newsletter-banner:hover { background: rgba(93,214,138,0.2); border-color: #5CD68A; }
+.newsletter-banner-close { background: none; border: none; color: rgba(255,255,255,0.25); font-size: 18px; cursor: pointer; padding: 4px 8px; line-height: 1; flex-shrink: 0; transition: color 0.15s; }
+.newsletter-banner-close:hover { color: rgba(255,255,255,0.6); }
+
+/* VISTA TALLERES ESPECIALIZADOS */
+.talleres-hero { background: linear-gradient(135deg, #0F2619 0%, #1A3D2E 50%, #1E4730 100%); padding: 40px 32px 32px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.talleres-hero-inner { max-width: 900px; margin: 0 auto; }
+.talleres-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: white; margin-bottom: 6px; }
+.talleres-sub { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+.talleres-content { max-width: 900px; margin: 32px auto; padding: 0 32px 64px; }
+.talleres-info-banner { background: rgba(93,214,138,0.07); border: 1px solid rgba(93,214,138,0.25); border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 24px; display: flex; gap: 12px; align-items: flex-start; }
+.talleres-info-banner span:first-child { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.talleres-info-banner p { font-size: 12px; color: rgba(255,255,255,0.7); line-height: 1.7; }
+.talleres-info-banner strong { color: #5CD68A; }
+.talleres-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.taller-ficha { background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); }
+.taller-ficha-header { padding: 16px 20px 12px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
+.taller-avatar { width: 40px; height: 40px; border-radius: var(--radius); background: var(--ink); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: white; flex-shrink: 0; }
+.taller-nombre { font-size: 14px; font-weight: 700; color: var(--ink); }
+.taller-ficha-body { padding: 12px 20px 14px; }
+.pending-access { background: var(--bg); border-radius: var(--radius-lg); padding: 40px 24px; text-align: center; grid-column: 1/-1; }
+.pending-access .pending-icon { font-size: 40px; margin-bottom: 12px; }
+.pending-access h3 { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.pending-access p { font-size: 13px; color: var(--ink-soft); max-width: 400px; margin: 0 auto 20px; line-height: 1.7; }
+.btn-solicitar-acceso { padding: 12px 24px; background: var(--ink); color: white; border: none; border-radius: var(--radius); font-family: var(--font); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; transition: background 0.15s; }
+.btn-solicitar-acceso:hover { background: var(--verde); }
+
+/* ADMIN TALLERES */
+.badge-auto { background: var(--success-bg); color: var(--success); }
+.badge-manual { background: #FFF3CD; color: #7A5E00; }
+
 @media (max-width: 640px) {
   .form-grid { grid-template-columns: 1fr; }
   .field.span2 { grid-column: span 1; }
@@ -244,10 +323,34 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   .tipo-empresa-group { flex-direction: column; }
   .stats-bar { flex-wrap: wrap; }
   .permisos-grid { grid-template-columns: 1fr; }
+  .newsletter-cards { grid-template-columns: 1fr; }
+  .landing-cta-group { flex-direction: column; align-items: center; }
 }
 </style>
 </head>
 <body>
+
+<!-- LANDING PAGE -->
+<div id="landingScreen">
+  <div class="landing-wrapper">
+    <div class="landing-hero">
+      <div class="landing-eyebrow">Piel de Ubrique · Asopiel</div>
+      <h1 class="landing-title">El mayor ecosistema industrial de<br><em>marroquinería de Europa</em></h1>
+      <div class="landing-body">
+        <p>Un término municipal donde confluyen empresas para dar cabida a toda la cadena productiva con el objetivo de desarrollar el mejor producto de lujo con el que puedas soñar.</p>
+        <p>Este pueblo, enclavado en un valle pequeño, rodeado por sierras, conserva el saber hacer de nuestro oficio. Un legado que se ha ido heredando de padres a hijos desde que en 1.733 comenzaran a darse de alta las primeras curtidurías, precursoras de la industria que hoy conocemos como la de la Piel de Ubrique.</p>
+      </div>
+      <div class="landing-cta-group">
+        <button class="btn-landing-primary" onclick="irALogin()">Acceder al directorio →</button>
+        <button class="btn-landing-outline" onclick="irARegistroMarca()">Soy una marca · Solicitar acceso</button>
+      </div>
+    </div>
+
+    <div class="landing-login-bar">
+      <p>¿Tienes acceso al directorio? <a onclick="irALogin()">Iniciar sesión →</a> &nbsp;·&nbsp; ¿Eres una marca? <a onclick="irARegistroMarca()">Solicitar acceso</a></p>
+    </div>
+  </div>
+</div>
 
 <!-- LOADING -->
 <div id="loadingOverlay" class="loading-overlay" style="display:none">
@@ -323,6 +426,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
       <nav class="header-nav-wrapper">
         <div class="header-nav" id="headerNav">
           <button class="nav-btn active" id="navDirectorio" onclick="showView('directorio', this)">Directorio</button>
+          <button class="nav-btn" id="navTalleres" onclick="showView('talleres', this)" style="display:none">Talleres especializados</button>
           <button class="nav-btn" id="navRegistro" onclick="showView('registro', this)" style="display:none">Registrar empresa</button>
           <button class="nav-btn" id="navAdmin" onclick="showView('admin', this)" style="display:none">Administración</button>
           <div class="user-badge">
@@ -353,6 +457,25 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
         </div>
       </div>
     </div>
+    <!-- Banner newsletter (se personaliza por rol al hacer login) -->
+    <div id="newsletterBanner" class="newsletter-banner" style="display:none">
+      <div class="newsletter-banner-inner">
+        <div class="newsletter-banner-text">
+          <div class="newsletter-banner-icon" id="newsletterIcon">📢</div>
+          <div class="newsletter-banner-copy">
+            <span class="newsletter-banner-label">Canal de noticias · Asopiel</span>
+            <span class="newsletter-banner-title" id="newsletterTitle">Mantente al día del sector</span>
+            <span class="newsletter-banner-desc" id="newsletterDesc">Suscríbete al canal de noticias de Asopiel en Telegram.</span>
+          </div>
+        </div>
+        <a class="btn-newsletter-banner" id="newsletterBtn" href="#" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.248l-2.02 9.52c-.15.703-.54.876-1.094.546l-3-2.21-1.448 1.394c-.16.16-.294.294-.603.294l.215-3.053 5.556-5.017c.241-.215-.052-.334-.375-.12L7.28 14.4l-2.95-.92c-.641-.2-.653-.641.134-.948l11.524-4.444c.534-.193 1.001.13.574.16z"/></svg>
+          <span id="newsletterBtnText">Unirse al canal</span>
+        </a>
+        <button class="newsletter-banner-close" onclick="cerrarNewsletter()" title="Cerrar">×</button>
+      </div>
+    </div>
+
     <div class="filtros-bar">
       <div class="filtros-inner">
         <div class="search-input">
@@ -520,6 +643,19 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
     </div>
   </div>
 
+  <!-- TALLERES ESPECIALIZADOS -->
+  <div id="viewTalleres" class="view">
+    <div class="talleres-hero">
+      <div class="talleres-hero-inner">
+        <p class="talleres-title">Talleres Especializados</p>
+        <p class="talleres-sub">Directorio privado de talleres auxiliares del sector. Acceso exclusivo para fabricantes montadores.</p>
+      </div>
+    </div>
+    <div class="talleres-content" id="talleresContent">
+      <!-- Se rellena por JS según el estado de acceso -->
+    </div>
+  </div>
+
   <!-- ADMIN -->
   <div id="viewAdmin" class="view">
     <div class="admin-layout">
@@ -528,6 +664,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
         <div class="admin-nav-item active" onclick="showAdminSection('solicitudes', this)"><span>📋</span> Solicitudes empresas</div>
         <div class="admin-nav-item" onclick="showAdminSection('marcas', this)"><span>🏷️</span> Solicitudes marcas</div>
         <div class="admin-nav-item" onclick="showAdminSection('empresas', this)"><span>🏢</span> Empresas activas</div>
+        <div class="admin-nav-item" onclick="showAdminSection('talleresSol', this)"><span>🔧</span> Accesos talleres</div>
         <div class="admin-nav-item" onclick="showAdminSection('usuarios', this)"><span>👥</span> Usuarios y accesos</div>
       </aside>
       <main class="admin-main">
@@ -564,6 +701,23 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
             <table class="admin-table">
               <thead><tr><th>Empresa</th><th>Categoría</th><th>Plantilla</th><th>Capacidad</th><th>Acciones</th></tr></thead>
               <tbody id="tablaEmpresas"><tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">Cargando…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Accesos talleres -->
+        <div id="adminTalleresSol" style="display:none">
+          <p class="admin-page-title">Accesos a Talleres Especializados</p>
+          <p class="admin-page-sub">Fabricantes montadores que solicitan acceso al directorio de talleres. Los fabricantes adheridos a Asopiel obtienen acceso automático; el resto requiere autorización manual.</p>
+          <div class="admin-kpis" id="talleresKpis">
+            <div class="kpi-card"><div class="kpi-n" id="kpiTallerPend">—</div><div class="kpi-label">Pendientes</div></div>
+            <div class="kpi-card"><div class="kpi-n" id="kpiTallerAuto">—</div><div class="kpi-label">Acceso automático (Asopiel)</div></div>
+            <div class="kpi-card"><div class="kpi-n" id="kpiTallerAprob">—</div><div class="kpi-label">Aprobados manualmente</div></div>
+          </div>
+          <div class="admin-table-wrapper">
+            <table class="admin-table">
+              <thead><tr><th>Empresa</th><th>Email</th><th>Tipo de acceso</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <tbody id="tablaTalleresSol"><tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">Cargando…</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -728,6 +882,7 @@ function iniciarSesion(data) {
   loading(false);
   currentUser = data.usuario;
   authToken = data.token;
+  document.getElementById('landingScreen').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appMain').style.display = 'block';
   document.getElementById('userDisplayName').textContent = currentUser.nombre;
@@ -736,23 +891,42 @@ function iniciarSesion(data) {
   // Mostrar nav según rol
   document.getElementById('navAdmin').style.display = currentUser.rol === 'admin' ? '' : 'none';
   document.getElementById('navRegistro').style.display = currentUser.rol === 'admin' ? '' : 'none';
+  // Talleres: visible para fabricantes (asociado o no) y admin
+  const esFabricante = currentUser.rol === 'empresa' && currentUser.categoria &&
+    (currentUser.categoria === 'asociado-fabricante' || currentUser.categoria === 'no-asociado-fabricante');
+  document.getElementById('navTalleres').style.display = (esFabricante || currentUser.rol === 'admin') ? '' : 'none';
   // Subtítulo directorio para marca
   if (currentUser.rol === 'marca' && currentUser.permisos) {
     const cats = { 'asociado-fabricante': 'Fabricantes Asopiel', 'no-asociado-fabricante': 'Fabricantes', 'asociado-taller': 'Talleres Asopiel', 'no-asociado-taller': 'Talleres', 'asociado-proveedor': 'Proveedores Asopiel', 'no-asociado-proveedor': 'Proveedores', 'servicios': 'Servicios' };
     document.getElementById('dirSubtitle').textContent = 'Acceso a: ' + currentUser.permisos.map(p => cats[p] || p).join(' · ');
   }
   cargarDirectorio();
+  mostrarNewsletter();
   if (currentUser.rol === 'admin') { cargarSolicitudes(); cargarMarcas(); cargarUsuarios(); }
 }
 
 function doLogout() {
   currentUser = null; authToken = null; empresasData = [];
-  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('landingScreen').style.display = '';
+  document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appMain').style.display = 'none';
   document.getElementById('loginUser').value = '';
   document.getElementById('loginPass').value = '';
   document.getElementById('loginUserMarca').value = '';
   document.getElementById('loginPassMarca').value = '';
+}
+
+function irALogin() {
+  document.getElementById('landingScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = '';
+}
+
+function irARegistroMarca() {
+  document.getElementById('landingScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appMain').style.display = 'block';
+  document.getElementById('headerNav').style.display = 'none';
+  showView('registroMarca');
 }
 
 document.addEventListener('keydown', e => {
@@ -771,17 +945,23 @@ function showView(viewId, btn) {
   if (btn) btn.classList.add('active');
   // Si no hay sesión y se pide registroMarca, mostrar vista sin login
   if (viewId === 'registroMarca' && !currentUser) {
+    document.getElementById('landingScreen').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appMain').style.display = 'block';
     document.getElementById('headerNav').style.display = 'none';
   }
+  // Cargar talleres al entrar en esa vista
+  if (viewId === 'talleres' && currentUser) {
+    cargarVistaTalleres();
+  }
 }
 
 function showAdminSection(sec, el) {
-  ['adminSolicitudes','adminMarcas','adminEmpresas','adminUsuarios'].forEach(id => document.getElementById(id).style.display = 'none');
+  ['adminSolicitudes','adminMarcas','adminEmpresas','adminTalleresSol','adminUsuarios'].forEach(id => document.getElementById(id).style.display = 'none');
   document.getElementById('admin' + sec.charAt(0).toUpperCase() + sec.slice(1)).style.display = '';
   document.querySelectorAll('.admin-nav-item').forEach(i => i.classList.remove('active'));
   el.classList.add('active');
+  if (sec === 'talleresSol') cargarTalleresSolicitudes();
 }
 
 // ── Directorio ────────────────────────────────────────────────────────────────
@@ -978,10 +1158,10 @@ async function submitRegistroMarca() {
     if (data.ok) {
       showToast('✅ Solicitud recibida. Asopiel te enviará las credenciales de acceso.');
       document.querySelectorAll('#viewRegistroMarca input, #viewRegistroMarca textarea').forEach(i => i.value = '');
-      // Volver al login
-      document.getElementById('loginScreen').style.display = 'flex';
+      // Volver a la landing
       document.getElementById('appMain').style.display = 'none';
       document.getElementById('headerNav').style.display = '';
+      document.getElementById('landingScreen').style.display = '';
     } else { showToast('Error al enviar la solicitud.', true); }
   } catch(e) { loading(false); showToast('Error de conexión.', true); }
 }
@@ -1192,10 +1372,236 @@ window.confirmarRevocar = async function() {
 // Cargar empresas activas al entrar en esa sección del admin
 document.querySelectorAll('.admin-nav-item').forEach((el, i) => {
   if (i === 2) { // empresas activas
-    const orig = el.onclick;
     el.addEventListener('click', () => cargarAdminEmpresas());
   }
 });
+
+// ── Banner newsletter ─────────────────────────────────────────────────────────
+const NEWSLETTER_DISMISSED_KEY = 'asopiel_newsletter_dismissed';
+
+function mostrarNewsletter() {
+  try { if (localStorage.getItem(NEWSLETTER_DISMISSED_KEY)) return; } catch(e) {}
+  const banner = document.getElementById('newsletterBanner');
+  if (!banner || !currentUser) return;
+
+  const esMarca = currentUser.rol === 'marca';
+  const icon    = document.getElementById('newsletterIcon');
+  const title   = document.getElementById('newsletterTitle');
+  const desc    = document.getElementById('newsletterDesc');
+  const btn     = document.getElementById('newsletterBtn');
+  const btnTxt  = document.getElementById('newsletterBtnText');
+
+  if (esMarca) {
+    icon.textContent   = '🏷️';
+    title.textContent  = 'Canal de noticias para marcas';
+    desc.textContent   = 'Tendencias en fabricación de lujo, nuevos fabricantes adheridos y oportunidades de sourcing en Ubrique.';
+    btn.href           = 'https://t.me/asopielubrique_marcas';
+    btnTxt.textContent = 'Unirse · Canal Marcas';
+  } else {
+    icon.textContent   = '🏭';
+    title.textContent  = 'Canal de noticias del sector';
+    desc.textContent   = 'Convocatorias de Asopiel, novedades del sector, ferias y formación especializada.';
+    btn.href           = 'https://t.me/asopielubrique_empresas';
+    btnTxt.textContent = 'Unirse · Canal Empresas';
+  }
+
+  banner.style.display = '';
+}
+
+function cerrarNewsletter() {
+  try { localStorage.setItem(NEWSLETTER_DISMISSED_KEY, '1'); } catch(e) {}
+  const banner = document.getElementById('newsletterBanner');
+  if (banner) banner.style.display = 'none';
+}
+
+// ── Talleres especializados ───────────────────────────────────────────────────
+// Estado de acceso del fabricante actual al directorio de talleres
+let tallerAccesoEstado = null; // 'auto' | 'aprobado' | 'pendiente' | 'sin-solicitud'
+
+async function cargarVistaTalleres() {
+  const contenedor = document.getElementById('talleresContent');
+  // Admin ve directamente el directorio completo
+  if (currentUser.rol === 'admin') {
+    await renderTalleresDirectorio(contenedor, true);
+    return;
+  }
+  // Comprobar si el fabricante tiene acceso
+  loading(true, 'Verificando acceso…');
+  try {
+    const data = await apiFetch('/talleres/acceso');
+    loading(false);
+    tallerAccesoEstado = data.estado || 'sin-solicitud';
+    if (tallerAccesoEstado === 'auto' || tallerAccesoEstado === 'aprobado') {
+      await renderTalleresDirectorio(contenedor, false);
+    } else if (tallerAccesoEstado === 'pendiente') {
+      contenedor.innerHTML = `
+        <div class="talleres-grid">
+          <div class="pending-access">
+            <div class="pending-icon">⏳</div>
+            <h3>Solicitud en revisión</h3>
+            <p>Tu solicitud de acceso al directorio de talleres especializados está siendo revisada por Asopiel. Recibirás notificación por email cuando sea autorizada.</p>
+          </div>
+        </div>`;
+    } else {
+      // Sin solicitud — mostrar banner de solicitud
+      const esAsopiel = currentUser.categoria === 'asociado-fabricante';
+      contenedor.innerHTML = `
+        <div class="talleres-info-banner">
+          <span>${esAsopiel ? '✅' : 'ℹ️'}</span>
+          <p>${esAsopiel
+            ? '<strong>Como fabricante adherido a Asopiel</strong>, tienes acceso automático al directorio de talleres especializados. Haz clic para activar tu acceso.'
+            : 'El acceso al directorio de talleres especializados está sujeto a <strong>autorización por parte de Asopiel</strong>. Solicita acceso y recibirás respuesta por email.'
+          }</p>
+        </div>
+        <div class="talleres-grid">
+          <div class="pending-access">
+            <div class="pending-icon">🔒</div>
+            <h3>${esAsopiel ? 'Directorio de Talleres Especializados' : 'Acceso restringido'}</h3>
+            <p>${esAsopiel
+              ? 'Activa tu acceso para consultar el directorio privado de talleres auxiliares del sector.'
+              : 'Como fabricante montador, puedes solicitar acceso al directorio de talleres especializados. Asopiel revisará tu solicitud.'
+            }</p>
+            <button class="btn-solicitar-acceso" onclick="solicitarAccesoTalleres()">${esAsopiel ? 'Activar acceso →' : 'Solicitar acceso →'}</button>
+          </div>
+        </div>`;
+    }
+  } catch(e) {
+    loading(false);
+    contenedor.innerHTML = `<div class="talleres-grid"><div class="pending-access"><div class="pending-icon">⚠️</div><h3>Error de conexión</h3><p>No se pudo verificar el acceso. Inténtalo de nuevo.</p></div></div>`;
+  }
+}
+
+async function renderTalleresDirectorio(contenedor, esAdmin) {
+  loading(true, 'Cargando talleres…');
+  try {
+    const data = await apiFetch('/talleres');
+    loading(false);
+    if (!data.ok || !data.data.length) {
+      contenedor.innerHTML = `<div class="empty-state"><div class="empty-icon">🔧</div><p>No hay talleres registrados en este momento.</p></div>`;
+      return;
+    }
+    const talleres = data.data;
+    contenedor.innerHTML = `
+      <div class="talleres-info-banner" style="margin-bottom:20px">
+        <span>🔒</span>
+        <p>Este directorio es <strong>confidencial</strong>. La información de contacto está destinada exclusivamente a la coordinación de producción entre fabricantes y talleres adheridos al sector.</p>
+      </div>
+      <div class="talleres-grid">
+        ${talleres.map(t => `
+          <div class="taller-ficha">
+            <div class="taller-ficha-header">
+              <div class="taller-avatar">${t.razon.charAt(0)}</div>
+              <div>
+                <div class="taller-nombre">${t.razon}</div>
+                <span class="ficha-tipo ${t.categoria === 'asociado-taller' ? 'badge-asoc-fab' : 'badge-aux'}">${CAT_LABEL[t.categoria] || t.categoria}</span>
+              </div>
+            </div>
+            <div class="taller-ficha-body">
+              <div class="ficha-datos">
+                ${(t.actividades||[]).length ? `<div class="dato-row"><span>Actividades</span><span>${(t.actividades||[]).join(', ')}</span></div>` : ''}
+                <div class="dato-row"><span>Responsable</span><span>${t.responsable || '—'}</span></div>
+                <div class="dato-row"><span>Teléfono</span><span><a href="tel:${t.tel}" style="color:var(--verde)">${t.tel || '—'}</a></span></div>
+                <div class="dato-row"><span>Email</span><span><a href="mailto:${t.email}" style="color:var(--verde);font-size:11px">${t.email || '—'}</a></span></div>
+                <div class="dato-row"><span>Capacidad</span><span>${t.capacidad === 'Sí' ? '✅ Disponible' : '⏸ Sin capacidad'}</span></div>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+  } catch(e) {
+    loading(false);
+    showToast('Error al cargar el directorio de talleres.', true);
+  }
+}
+
+async function solicitarAccesoTalleres() {
+  loading(true, 'Procesando solicitud…');
+  try {
+    const data = await apiFetch('/talleres/solicitar-acceso', { method: 'POST' });
+    loading(false);
+    if (data.ok) {
+      tallerAccesoEstado = data.estado;
+      if (data.estado === 'auto' || data.estado === 'aprobado') {
+        showToast('✅ Acceso activado. Ya puedes consultar el directorio de talleres.');
+        await cargarVistaTalleres();
+      } else {
+        showToast('✅ Solicitud enviada. Asopiel revisará tu petición y te notificará por email.');
+        tallerAccesoEstado = 'pendiente';
+        await cargarVistaTalleres();
+      }
+    } else {
+      showToast(data.error || 'Error al procesar la solicitud.', true);
+    }
+  } catch(e) {
+    loading(false);
+    showToast('Error de conexión.', true);
+  }
+}
+
+// ── Admin: solicitudes acceso talleres ────────────────────────────────────────
+async function cargarTalleresSolicitudes() {
+  try {
+    const data = await apiFetch('/talleres/solicitudes');
+    if (!data.ok) return;
+    const solicitudes = data.data || [];
+    // KPIs
+    document.getElementById('kpiTallerPend').textContent = solicitudes.filter(s => s.estado === 'pendiente').length;
+    document.getElementById('kpiTallerAuto').textContent = solicitudes.filter(s => s.tipo_acceso === 'auto').length;
+    document.getElementById('kpiTallerAprob').textContent = solicitudes.filter(s => s.estado === 'aprobado' && s.tipo_acceso !== 'auto').length;
+    const tbody = document.getElementById('tablaTalleresSol');
+    if (!solicitudes.length) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">No hay solicitudes registradas.</td></tr>';
+      return;
+    }
+    tbody.innerHTML = solicitudes.map(s => `
+      <tr>
+        <td><strong>${s.razon || s.empresa_id}</strong></td>
+        <td style="font-size:11px;color:var(--ink-mid)">${s.email || '—'}</td>
+        <td>
+          <span class="badge ${s.tipo_acceso === 'auto' ? 'badge-auto' : 'badge-manual'}">
+            ${s.tipo_acceso === 'auto' ? '⚡ Automático (Asopiel)' : '🔑 Requiere autorización'}
+          </span>
+        </td>
+        <td><span class="badge badge-${s.estado === 'pendiente' ? 'pendiente' : s.estado === 'aprobado' ? 'activo' : 'revocado'}">${s.estado}</span></td>
+        <td><div class="admin-actions">
+          ${s.estado === 'pendiente' && s.tipo_acceso !== 'auto' ? `
+            <button class="btn-admin success" onclick="aprobarAccesoTaller('${s.id}')">✓ Aprobar</button>
+            <button class="btn-admin danger" onclick="denegarAccesoTaller('${s.id}')">✗ Denegar</button>` : ''}
+          ${s.estado === 'aprobado' ? `<button class="btn-admin danger" onclick="revocarAccesoTaller('${s.id}')">Revocar</button>` : ''}
+        </div></td>
+      </tr>`).join('');
+  } catch(e) { console.error(e); }
+}
+
+async function aprobarAccesoTaller(id) {
+  loading(true, 'Aprobando acceso…');
+  try {
+    const data = await apiFetch(`/talleres/solicitudes/${id}/aprobar`, { method: 'POST' });
+    loading(false);
+    if (data.ok) { showToast('✅ Acceso al directorio de talleres aprobado.'); cargarTalleresSolicitudes(); }
+    else showToast('Error al aprobar.', true);
+  } catch(e) { loading(false); showToast('Error de conexión.', true); }
+}
+
+async function denegarAccesoTaller(id) {
+  loading(true, 'Denegando acceso…');
+  try {
+    const data = await apiFetch(`/talleres/solicitudes/${id}/denegar`, { method: 'POST' });
+    loading(false);
+    if (data.ok) { showToast('Acceso denegado.'); cargarTalleresSolicitudes(); }
+    else showToast('Error al denegar.', true);
+  } catch(e) { loading(false); showToast('Error de conexión.', true); }
+}
+
+async function revocarAccesoTaller(id) {
+  if (!confirm('¿Revocar el acceso al directorio de talleres?')) return;
+  loading(true, 'Revocando…');
+  try {
+    const data = await apiFetch(`/talleres/solicitudes/${id}/revocar`, { method: 'POST' });
+    loading(false);
+    if (data.ok) { showToast('Acceso revocado.'); cargarTalleresSolicitudes(); }
+    else showToast('Error al revocar.', true);
+  } catch(e) { loading(false); showToast('Error de conexión.', true); }
+}
 </script>
 </body>
 </html>
