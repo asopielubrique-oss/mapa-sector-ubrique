@@ -1130,12 +1130,10 @@ async function cargarDirectorio() {
   try {
     const data = await apiFetch('/empresas');
     loading(false);
-    if (data.ok) {
-      empresasData = data.data;
-      updateStats();
-      populateActividadesFilter();
-      renderEmpresas();
-    }
+    empresasData = Array.isArray(data) ? data : (data.data || []);
+    updateStats();
+    populateActividadesFilter();
+    renderEmpresas();
   } catch(e) { loading(false); showToast('Error al cargar el directorio.', true); }
 }
 
@@ -1292,9 +1290,9 @@ async function submitFormEmpresa() {
   };
   loading(true, 'Enviando solicitud…');
   try {
-    const data = await apiFetch('/solicitudes', { method: 'POST', body: JSON.stringify(body) });
+    const data = await apiFetch('/empresas', { method: 'POST', body: JSON.stringify(body) });
     loading(false);
-    if (data.ok) {
+    if (data.id || data.ok) {
       showToast('✅ Solicitud enviada. Asopiel te contactará por email.');
       document.querySelectorAll('#viewRegistro input, #viewRegistro textarea').forEach(i => { i.value = ''; if(i.type==='checkbox'||i.type==='radio') i.checked=false; });
       onTipoChange();
@@ -1560,9 +1558,8 @@ async function submitRegistroMarca() {
 // ── Admin: solicitudes empresa ────────────────────────────────────────────────
 async function cargarSolicitudes() {
   try {
-    const data = await apiFetch('/solicitudes');
-    if (!data.ok) return;
-    const pending = data.data.filter(s => s.tipo !== 'marca' && s.estado === 'pendiente');
+    const data = await apiFetch('/admin/pending');
+    const pending = Array.isArray(data) ? data : (data.data || []);
     const tbody = document.getElementById('tablaSolicitudes');
     if (!pending.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:32px">No hay solicitudes pendientes.</td></tr>'; return; }
     tbody.innerHTML = pending.map(s => `
@@ -1583,11 +1580,11 @@ async function cargarSolicitudes() {
 async function aprobarSolicitud(id) {
   loading(true, 'Aprobando solicitud…');
   try {
-    const data = await apiFetch(`/solicitudes/${id}/aprobar`, { method: 'POST' });
+    const data = await apiFetch(`/admin/approve/${id}`, { method: 'POST' });
     loading(false);
-    if (data.ok) {
-      const { empresa, usuario } = data.data;
-      showToast(`✅ ${empresa.razon} aprobada. Credenciales: ${usuario.email} / ${usuario.password}`);
+    if (data.id || data.ok || data.empresa) {
+      const empresa = data.empresa || data;
+      showToast(`✅ ${empresa.razon || 'Empresa'} aprobada.`);
       cargarSolicitudes(); cargarDirectorio(); cargarUsuarios();
     } else { showToast('Error al aprobar.', true); }
   } catch(e) { loading(false); showToast('Error de conexión.', true); }
@@ -1596,9 +1593,9 @@ async function aprobarSolicitud(id) {
 async function rechazarSolicitud(id) {
   loading(true, 'Rechazando…');
   try {
-    const data = await apiFetch(`/solicitudes/${id}/rechazar`, { method: 'POST' });
+    const data = await apiFetch(`/empresas/${id}`, { method: 'DELETE' });
     loading(false);
-    if (data.ok) { showToast('Solicitud rechazada.'); cargarSolicitudes(); }
+    if (data.ok || data.id || data.deleted) { showToast('Solicitud rechazada.'); cargarSolicitudes(); }
   } catch(e) { loading(false); showToast('Error de conexión.', true); }
 }
 
@@ -1607,11 +1604,10 @@ let _marcasCache = [];
 async function cargarMarcas() {
   try {
     const data = await apiFetch('/marcas');
-    if (!data.ok) return;
-    _marcasCache = data.data || [];
+    _marcasCache = Array.isArray(data) ? data : (data.data || []);
     const tbody = document.getElementById('tablaMarcas');
-    if (!data.data.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">No hay solicitudes de marcas.</td></tr>'; return; }
-    tbody.innerHTML = data.data.map(s => `
+    if (!_marcasCache.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">No hay solicitudes de marcas.</td></tr>'; return; }
+    tbody.innerHTML = _marcasCache.map(s => `
       <tr>
         <td><strong>${s.marca}</strong></td>
         <td>${s.contacto}<br><span style="font-size:11px;color:var(--ink-soft)">${s.email}</span></td>
@@ -1747,9 +1743,9 @@ async function confirmarRevocar() {
 async function cargarAdminEmpresas() {
   try {
     const data = await apiFetch('/empresas');
-    if (!data.ok) return;
+    const empresas = Array.isArray(data) ? data : (data.data || []);
     const tbody = document.getElementById('tablaEmpresas');
-    tbody.innerHTML = data.data.map(e => `
+    tbody.innerHTML = empresas.map(e => `
       <tr>
         <td><strong>${e.razon}</strong></td>
         <td><span class="badge" style="background:var(--verde-pale);color:var(--verde);font-size:9px">${CAT_LABEL[e.categoria] || e.categoria}</span></td>
@@ -1769,13 +1765,17 @@ async function darDeBaja(id) {
   try {
     const data = await apiFetch(`/empresas/${id}`, { method: 'DELETE' });
     loading(false);
-    if (data.ok) { showToast('Empresa dada de baja del directorio.'); cargarDirectorio(); cargarAdminEmpresas(); }
+    if (data.ok || data.deleted || data.id) { showToast('Empresa dada de baja del directorio.'); cargarDirectorio(); cargarAdminEmpresas(); }
   } catch(e) { loading(false); showToast('Error de conexión.', true); }
 }
 
 // ── Admin: usuarios ───────────────────────────────────────────────────────────
 async function cargarUsuarios() {
   try {
+    // /usuarios no existe en el Worker actual — mostrar aviso
+    const tbody = document.getElementById('tablaUsuarios');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:32px">Módulo de usuarios pendiente de activar.</td></tr>';
+    return;
     const data = await apiFetch('/usuarios');
     if (!data.ok) return;
     const cats = { 'asociado-fabricante': 'Fab.Asopiel', 'no-asociado-fabricante': 'Fabricante', 'asociado-taller': 'Taller Asopiel', 'no-asociado-taller': 'Taller', 'asociado-proveedor': 'Prov.Asopiel', 'no-asociado-proveedor': 'Proveedor', 'servicios': 'Servicios' };
@@ -1996,8 +1996,13 @@ async function solicitarAccesoTalleres() {
 // ── Admin: solicitudes acceso talleres ────────────────────────────────────────
 async function cargarTalleresSolicitudes() {
   try {
-    const data = await apiFetch('/talleres/solicitudes');
-    if (!data.ok) return;
+    // Ruta no implementada en Worker actual — mostrar aviso
+    const tbody = document.getElementById('tablaTalleresSol');
+    if (tbody) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">Módulo de talleres pendiente de activar.</td></tr>'; }
+    document.getElementById('kpiTallerPend').textContent = '—';
+    document.getElementById('kpiTallerAuto').textContent = '—';
+    document.getElementById('kpiTallerAprob').textContent = '—';
+    return;
     const solicitudes = data.data || [];
     // KPIs
     document.getElementById('kpiTallerPend').textContent = solicitudes.filter(s => s.estado === 'pendiente').length;
