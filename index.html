@@ -1542,9 +1542,9 @@ async function submitRegistroMarca() {
 
   loading(true, 'Enviando solicitud…');
   try {
-    const data = await apiFetch('/marcas/registro', { method: 'POST', body: JSON.stringify(body) });
+    const data = await apiFetch('/marcas', { method: 'POST', body: JSON.stringify(body) });
     loading(false);
-    if (data.ok) {
+    if (data.id || data.ok) {
       showToast(t.toastOk);
       document.querySelectorAll('#viewRegistroMarca input, #viewRegistroMarca textarea').forEach(i => { i.value = ''; if(i.type==='checkbox') i.checked=false; });
       marcaPrevStep();
