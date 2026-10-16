@@ -1773,8 +1773,8 @@ async function darDeBaja(id) {
 async function cargarUsuarios() {
   try {
     // /usuarios no existe en el Worker actual — mostrar aviso
-    const tbody = document.getElementById('tablaUsuarios');
-    if (tbody) tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:32px">Módulo de usuarios pendiente de activar.</td></tr>';
+    const tbodyU = document.getElementById('tablaUsuarios');
+    if (tbodyU) tbodyU.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:32px">Módulo de usuarios pendiente de activar.</td></tr>';
     return;
     const data = await apiFetch('/usuarios');
     if (!data.ok) return;
@@ -1997,8 +1997,8 @@ async function solicitarAccesoTalleres() {
 async function cargarTalleresSolicitudes() {
   try {
     // Ruta no implementada en Worker actual — mostrar aviso
-    const tbody = document.getElementById('tablaTalleresSol');
-    if (tbody) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">Módulo de talleres pendiente de activar.</td></tr>'; }
+    const tbodyT = document.getElementById('tablaTalleresSol');
+    if (tbodyT) { tbodyT.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">Módulo de talleres pendiente de activar.</td></tr>'; }
     document.getElementById('kpiTallerPend').textContent = '—';
     document.getElementById('kpiTallerAuto').textContent = '—';
     document.getElementById('kpiTallerAprob').textContent = '—';
