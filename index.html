@@ -66,6 +66,40 @@ body { font-family: var(--font); background: var(--bg); color: var(--ink); min-h
 .marca-form input:focus, .marca-form textarea:focus { border-color: var(--verde); background: white; }
 .marca-form textarea { resize: vertical; min-height: 70px; }
 
+/* SELECTOR IDIOMA */
+.lang-selector { display: flex; gap: 6px; margin-bottom: 24px; }
+.lang-btn { padding: 7px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg); color: var(--ink-mid); font-family: var(--font); font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s; }
+.lang-btn:hover { border-color: var(--verde); color: var(--verde); }
+.lang-btn.active { background: var(--ink); color: white; border-color: var(--ink); }
+
+/* FICHA EMPRESARIAL PASOS */
+.form-step { display: none; }
+.form-step.active { display: block; }
+.step-indicator { display: flex; align-items: center; gap: 0; margin-bottom: 28px; }
+.step-dot { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--ink-soft); }
+.step-dot.active { color: var(--verde); }
+.step-dot.done { color: var(--ink); }
+.step-num { width: 26px; height: 26px; border-radius: 50%; border: 2px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+.step-dot.done .step-num { background: var(--verde); border-color: var(--verde); color: white; }
+.step-dot.active .step-num { border-color: var(--verde); }
+.step-line { flex: 1; height: 1px; background: var(--border); margin: 0 10px; }
+.check-group { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 8px; margin-top: 8px; }
+.check-group label.check-option { font-weight: 400; }
+
+/* FICHA PANEL ADMIN */
+.ficha-empresarial-panel { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-top: 18px; overflow: hidden; }
+.ficha-empresarial-toggle { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; cursor: pointer; font-size: 12px; font-weight: 700; color: var(--ink); user-select: none; }
+.ficha-empresarial-toggle:hover { background: var(--verde-pale); }
+.ficha-empresarial-body { padding: 16px; border-top: 1px solid var(--border); display: none; }
+.ficha-empresarial-body.open { display: block; }
+.ficha-section { margin-bottom: 16px; }
+.ficha-section-title { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--verde); margin-bottom: 8px; }
+.ficha-dato-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.ficha-dato { display: flex; flex-direction: column; gap: 2px; }
+.ficha-dato-label { font-size: 10px; color: var(--ink-soft); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; }
+.ficha-dato-val { font-size: 12px; color: var(--ink); }
+.ficha-dato.full { grid-column: span 2; }
+
 /* DIRECTORIO */
 .directorio-header { background: var(--ink); padding: 40px 32px 0; }
 .directorio-header-inner { max-width: 1200px; margin: 0 auto; }
@@ -615,30 +649,142 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   <!-- REGISTRO MARCA (también accesible sin login) -->
   <div id="viewRegistroMarca" class="view">
     <div class="registro-hero">
-      <span class="hero-eyebrow">Acceso para Marcas · Piel de Ubrique</span>
-      <h1 class="hero-title">Encuentra tu fabricante ideal en Ubrique</h1>
-      <p class="hero-desc">Solicita acceso al directorio privado de fabricantes y empresas del sector Piel de Ubrique. Asopiel validará tu solicitud.</p>
+      <span class="hero-eyebrow" id="mHeroEyebrow">Acceso para Marcas · Piel de Ubrique</span>
+      <h1 class="hero-title" id="mHeroTitle">Encuentra tu fabricante ideal en Ubrique</h1>
+      <p class="hero-desc" id="mHeroDesc">Solicita acceso al directorio privado de fabricantes y empresas del sector Piel de Ubrique. Asopiel validará tu solicitud.</p>
     </div>
     <div class="form-wrapper">
       <div class="form-card">
-        <div class="form-section">
-          <p class="section-label">Datos de la marca</p>
-          <div class="form-grid marca-form">
-            <div class="field span2"><label>Nombre de la marca <span class="req">*</span></label><input type="text" id="m_marca" placeholder="Nombre comercial de tu marca"></div>
-            <div class="field"><label>Persona de contacto <span class="req">*</span></label><input type="text" id="m_contacto" placeholder="Nombre y apellidos"></div>
-            <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="m_email" placeholder="contacto@tumarca.com"></div>
-            <div class="field"><label>Teléfono <span class="opt">(opcional)</span></label><input type="tel" id="m_tel" placeholder="+34 000 000 000"></div>
-            <div class="field"><label>País <span class="req">*</span></label><input type="text" id="m_pais" placeholder="España, Francia, Italia…"></div>
-            <div class="field span2">
-              <label>¿Qué tipo de fabricante buscas? <span class="opt">(opcional)</span></label>
-              <textarea id="m_brief" placeholder="Describe brevemente qué producto necesitas fabricar, materiales, volúmenes estimados…"></textarea>
+
+        <!-- Selector de idioma -->
+        <div class="form-section" style="padding-bottom:20px">
+          <div class="lang-selector">
+            <button class="lang-btn active" onclick="setLang('es',this)">🇪🇸 Español</button>
+            <button class="lang-btn" onclick="setLang('en',this)">🇬🇧 English</button>
+            <button class="lang-btn" onclick="setLang('fr',this)">🇫🇷 Français</button>
+          </div>
+          <!-- Indicador de pasos -->
+          <div class="step-indicator">
+            <div class="step-dot active" id="stepDot1">
+              <div class="step-num">1</div>
+              <span id="stepLabel1">Datos de la marca</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step-dot" id="stepDot2">
+              <div class="step-num">2</div>
+              <span id="stepLabel2">Ficha empresarial</span>
             </div>
           </div>
         </div>
-        <div class="form-footer">
-          <p class="form-note">Asopiel revisará tu solicitud y te enviará credenciales de acceso al directorio.</p>
-          <button class="btn-submit" onclick="submitRegistroMarca()">Solicitar acceso →</button>
+
+        <!-- PASO 1: Datos básicos -->
+        <div id="marcaStep1" class="form-step active">
+          <div class="form-section">
+            <p class="section-label" id="mLabel1">1 · Datos de la marca</p>
+            <div class="form-grid marca-form">
+              <div class="field span2"><label id="lMarca">Nombre de la marca <span class="req">*</span></label><input type="text" id="m_marca" placeholder="Nombre comercial de tu marca"></div>
+              <div class="field"><label id="lContacto">Persona de contacto <span class="req">*</span></label><input type="text" id="m_contacto" placeholder="Nombre y apellidos"></div>
+              <div class="field"><label id="lEmail">Email <span class="req">*</span></label><input type="email" id="m_email" placeholder="contacto@tumarca.com"></div>
+              <div class="field"><label id="lTel">Teléfono <span class="opt" id="lOpt1">(opcional)</span></label><input type="tel" id="m_tel" placeholder="+34 000 000 000"></div>
+              <div class="field"><label id="lPais">País <span class="req">*</span></label><input type="text" id="m_pais" placeholder="España, Francia, Italia…"></div>
+            </div>
+          </div>
+          <div class="form-footer">
+            <p class="form-note" id="mNote1">Asopiel revisará tu solicitud y te enviará credenciales de acceso al directorio.</p>
+            <button class="btn-submit" id="mBtnNext" onclick="marcaNextStep()">Siguiente →</button>
+          </div>
         </div>
+
+        <!-- PASO 2: Ficha empresarial -->
+        <div id="marcaStep2" class="form-step">
+          <!-- Sección 1: Datos identificativos empresa -->
+          <div class="form-section">
+            <p class="section-label" id="mLabel2_1">1 · Datos Identificativos de la Empresa</p>
+            <div class="form-grid">
+              <div class="field span2"><label id="lEmpresa">Nombre de la empresa <span class="req">*</span></label><input type="text" id="f2_empresa" placeholder="Razón social / nombre legal"></div>
+              <div class="field"><label id="lRepresentante">Nombre del representante <span class="req">*</span></label><input type="text" id="f2_representante" placeholder="Nombre y apellidos"></div>
+              <div class="field"><label id="lCargo">Cargo <span class="req">*</span></label><input type="text" id="f2_cargo" placeholder="CEO, Director de Compras…"></div>
+              <div class="field"><label id="lTel2">Teléfono <span class="req">*</span></label><input type="tel" id="f2_tel" placeholder="+34 000 000 000"></div>
+              <div class="field"><label id="lEmail2">Email <span class="req">*</span></label><input type="email" id="f2_email" placeholder="contacto@empresa.com"></div>
+              <div class="field span2"><label id="lWeb">Página web <span class="opt" id="lOpt2">(opcional)</span></label><input type="url" id="f2_web" placeholder="https://"></div>
+            </div>
+          </div>
+
+          <!-- Sección 2: Motivo del contacto -->
+          <div class="form-section">
+            <p class="section-label" id="mLabel2_2">2 · Motivo del Contacto</p>
+            <div class="check-group">
+              <label class="check-option"><input type="checkbox" id="f2_mot1"> <span id="lMot1">Búsqueda de empresas para fabricar producción específica</span></label>
+              <label class="check-option"><input type="checkbox" id="f2_mot2"> <span id="lMot2">Desarrollo de nuevos modelos</span></label>
+              <label class="check-option"><input type="checkbox" id="f2_mot3"> <span id="lMot3">Inicio de marca</span></label>
+              <label class="check-option"><input type="checkbox" id="f2_mot4"> <span id="lMot4">Otros</span></label>
+            </div>
+            <div style="margin-top:10px">
+              <label id="lMotOtros" style="font-size:12px;font-weight:600;display:block;margin-bottom:5px">Especificar (si aplica)</label>
+              <input type="text" id="f2_mot_otros" placeholder="…">
+            </div>
+          </div>
+
+          <!-- Sección 3: Datos de producción -->
+          <div class="form-section">
+            <p class="section-label" id="mLabel2_3">3 · Datos de Producción (Último Año)</p>
+            <div class="form-grid">
+              <div class="field span2"><label id="lProdTotal">Producción total último año <span class="opt" id="lOpt3">(opcional)</span></label><input type="text" id="f2_prod_total" placeholder="Ej: 10.000 unidades"></div>
+              <div class="field"><label id="lProdBolsos">Número de bolsos producidos <span class="opt" id="lOpt4">(opcional)</span></label><input type="number" id="f2_prod_bolsos" placeholder="0" min="0"></div>
+              <div class="field"><label id="lProdPeq">Artículos pequeña marroquinería <span class="opt" id="lOpt5">(opcional)</span></label><input type="number" id="f2_prod_peq" placeholder="0" min="0"></div>
+              <div class="field span2"><label id="lProdOtros">Otros productos <span class="opt" id="lOpt6">(opcional)</span></label><input type="text" id="f2_prod_otros" placeholder="Especificar tipo y cantidad"></div>
+            </div>
+          </div>
+
+          <!-- Sección 4: Proyecto a desarrollar -->
+          <div class="form-section">
+            <p class="section-label" id="mLabel2_4">4 · Proyecto a Desarrollar en Ubrique</p>
+            <div class="form-grid">
+              <div class="field span2"><label id="lProyProd">Producción prevista a desarrollar <span class="opt" id="lOpt7">(opcional)</span></label><input type="text" id="f2_proy_prod" placeholder="Descripción del producto a fabricar"></div>
+              <div class="field"><label id="lProyVol">Volumen estimado de unidades <span class="opt" id="lOpt8">(opcional)</span></label><input type="number" id="f2_proy_vol" placeholder="0" min="0"></div>
+              <div class="field"><label id="lProyPresup">Presupuesto aproximado (€) <span class="opt" id="lOpt9">(opcional)</span></label><input type="number" id="f2_proy_presup" placeholder="0" min="0"></div>
+              <div class="field span2"><label id="lProyFecha">Fecha estimada de inicio del proyecto <span class="opt" id="lOpt10">(opcional)</span></label><input type="text" id="f2_proy_fecha" placeholder="Ej: Enero 2025, Q1 2025…"></div>
+            </div>
+          </div>
+
+          <!-- Sección 5: Necesidades específicas -->
+          <div class="form-section">
+            <p class="section-label" id="mLabel2_5">5 · Necesidades Específicas del Proyecto</p>
+            <div class="check-group">
+              <label class="check-option"><input type="checkbox" id="f2_nec1"> <span id="lNec1">Fabricación integral</span></label>
+              <label class="check-option"><input type="checkbox" id="f2_nec2"> <span id="lNec2">Patronaje y desarrollo técnico</span></label>
+              <label class="check-option"><input type="checkbox" id="f2_nec3"> <span id="lNec3">Prototipado</span></label>
+              <label class="check-option"><input type="checkbox" id="f2_nec4"> <span id="lNec4">Producción en serie</span></label>
+              <label class="check-option"><input type="checkbox" id="f2_nec5"> <span id="lNec5">Asesoramiento técnico</span></label>
+              <label class="check-option"><input type="checkbox" id="f2_nec6"> <span id="lNec6">Otros</span></label>
+            </div>
+            <div style="margin-top:10px">
+              <label id="lNecOtros" style="font-size:12px;font-weight:600;display:block;margin-bottom:5px">Especificar (si aplica)</label>
+              <input type="text" id="f2_nec_otros" placeholder="…">
+            </div>
+          </div>
+
+          <!-- Sección 6: Observaciones -->
+          <div class="form-section">
+            <p class="section-label" id="mLabel2_6">6 · Observaciones</p>
+            <textarea id="f2_observaciones" style="min-height:90px" placeholder="Cualquier información adicional relevante…"></textarea>
+          </div>
+
+          <!-- Sección 7: Protección de datos -->
+          <div class="form-section">
+            <p class="section-label" id="mLabel2_7">7 · Protección de Datos</p>
+            <label class="check-option">
+              <input type="checkbox" id="f2_gdpr">
+              <span id="lGdpr">La información facilitada será utilizada exclusivamente para la gestión de la visita empresarial y la intermediación con las empresas asociadas a ASOPIEL.</span>
+            </label>
+          </div>
+
+          <div class="form-footer" style="justify-content:space-between">
+            <button class="btn-submit" style="background:transparent;color:var(--ink);border:1px solid var(--border)" onclick="marcaPrevStep()">← <span id="mBtnBack">Volver</span></button>
+            <button class="btn-submit" id="mBtnSubmit" onclick="submitRegistroMarca()">Solicitar acceso →</button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -690,6 +836,20 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
               <thead><tr><th>Marca</th><th>Contacto</th><th>País</th><th>Estado</th><th>Acciones</th></tr></thead>
               <tbody id="tablaMarcas"><tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">Cargando…</td></tr></tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Modal ficha empresarial marca -->
+        <div class="modal-overlay" id="modalFichaMarca" onclick="if(event.target===this)this.classList.remove('open')">
+          <div class="modal" style="max-width:700px">
+            <div class="modal-header">
+              <div>
+                <div style="font-size:16px;font-weight:700;color:var(--ink)" id="modalFichaMarcaNombre">—</div>
+                <div style="font-size:11px;color:var(--ink-soft);margin-top:3px" id="modalFichaMarcaSub">Ficha empresarial</div>
+              </div>
+              <button class="modal-close" onclick="document.getElementById('modalFichaMarca').classList.remove('open')">×</button>
+            </div>
+            <div class="modal-body" id="modalFichaMarcaBody"></div>
           </div>
         </div>
 
@@ -859,9 +1019,9 @@ async function doLogin() {
   err.style.display = 'none';
   loading(true, 'Verificando credenciales…');
   try {
-    const data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
-    if (!data.ok) { loading(false); err.style.display = 'block'; return; }
-    iniciarSesion(data);
+    const data = await apiFetch('/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
+    if (!data.token) { loading(false); err.style.display = 'block'; return; }
+    iniciarSesion({ token: data.token, usuario: data.user });
   } catch(e) { loading(false); showToast('Error de conexión con el servidor.', true); }
 }
 
@@ -872,9 +1032,9 @@ async function doLoginMarca() {
   err.style.display = 'none';
   loading(true, 'Verificando credenciales…');
   try {
-    const data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
-    if (!data.ok) { loading(false); err.style.display = 'block'; return; }
-    iniciarSesion(data);
+    const data = await apiFetch('/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
+    if (!data.token) { loading(false); err.style.display = 'block'; return; }
+    iniciarSesion({ token: data.token, usuario: data.user });
   } catch(e) { loading(false); showToast('Error de conexión con el servidor.', true); }
 }
 
@@ -887,22 +1047,22 @@ function iniciarSesion(data) {
   document.getElementById('appMain').style.display = 'block';
   document.getElementById('userDisplayName').textContent = currentUser.nombre;
   const roles = { admin: 'Administrador Asopiel', empresa: 'Empresa del sector', marca: 'Acceso marca', consulta: 'Acceso consulta' };
-  document.getElementById('userDisplayRole').textContent = roles[currentUser.rol] || currentUser.rol;
+  document.getElementById('userDisplayRole').textContent = roles[currentUser.role] || currentUser.role;
   // Mostrar nav según rol
-  document.getElementById('navAdmin').style.display = currentUser.rol === 'admin' ? '' : 'none';
-  document.getElementById('navRegistro').style.display = currentUser.rol === 'admin' ? '' : 'none';
+  document.getElementById('navAdmin').style.display = currentUser.role === 'admin' ? '' : 'none';
+  document.getElementById('navRegistro').style.display = currentUser.role === 'admin' ? '' : 'none';
   // Talleres: visible para fabricantes (asociado o no) y admin
-  const esFabricante = currentUser.rol === 'empresa' && currentUser.categoria &&
+  const esFabricante = currentUser.role === 'empresa' && currentUser.categoria &&
     (currentUser.categoria === 'asociado-fabricante' || currentUser.categoria === 'no-asociado-fabricante');
-  document.getElementById('navTalleres').style.display = (esFabricante || currentUser.rol === 'admin') ? '' : 'none';
+  document.getElementById('navTalleres').style.display = (esFabricante || currentUser.role === 'admin') ? '' : 'none';
   // Subtítulo directorio para marca
-  if (currentUser.rol === 'marca' && currentUser.permisos) {
+  if (currentUser.role === 'marca' && currentUser.permisos) {
     const cats = { 'asociado-fabricante': 'Fabricantes Asopiel', 'no-asociado-fabricante': 'Fabricantes', 'asociado-taller': 'Talleres Asopiel', 'no-asociado-taller': 'Talleres', 'asociado-proveedor': 'Proveedores Asopiel', 'no-asociado-proveedor': 'Proveedores', 'servicios': 'Servicios' };
     document.getElementById('dirSubtitle').textContent = 'Acceso a: ' + currentUser.permisos.map(p => cats[p] || p).join(' · ');
   }
   cargarDirectorio();
   mostrarNewsletter();
-  if (currentUser.rol === 'admin') { cargarSolicitudes(); cargarMarcas(); cargarUsuarios(); }
+  if (currentUser.role === 'admin') { cargarSolicitudes(); cargarMarcas(); cargarUsuarios(); }
 }
 
 function doLogout() {
@@ -1143,26 +1303,257 @@ async function submitFormEmpresa() {
   } catch(e) { loading(false); showToast('Error de conexión.', true); }
 }
 
-// ── Registro marca ────────────────────────────────────────────────────────────
-async function submitRegistroMarca() {
+// ── i18n Registro Marca ───────────────────────────────────────────────────────
+const MARCA_I18N = {
+  es: {
+    heroEyebrow: 'Acceso para Marcas · Piel de Ubrique',
+    heroTitle: 'Encuentra tu fabricante ideal en Ubrique',
+    heroDesc: 'Solicita acceso al directorio privado de fabricantes y empresas del sector Piel de Ubrique. Asopiel validará tu solicitud.',
+    stepLabel1: 'Datos de la marca', stepLabel2: 'Ficha empresarial',
+    label1: '1 · Datos de la marca',
+    lMarca: 'Nombre de la marca', lContacto: 'Persona de contacto', lEmail: 'Email',
+    lTel: 'Teléfono', lOpt1: '(opcional)', lPais: 'País',
+    note1: 'Asopiel revisará tu solicitud y te enviará credenciales de acceso al directorio.',
+    btnNext: 'Siguiente →',
+    label2_1: '1 · Datos Identificativos de la Empresa',
+    lEmpresa: 'Nombre de la empresa', lRepresentante: 'Nombre del representante', lCargo: 'Cargo',
+    lTel2: 'Teléfono', lEmail2: 'Email', lWeb: 'Página web', lOpt2: '(opcional)',
+    label2_2: '2 · Motivo del Contacto',
+    lMot1: 'Búsqueda de empresas para fabricar producción específica',
+    lMot2: 'Desarrollo de nuevos modelos', lMot3: 'Inicio de marca', lMot4: 'Otros',
+    lMotOtros: 'Especificar (si aplica)',
+    label2_3: '3 · Datos de Producción (Último Año)',
+    lProdTotal: 'Producción total último año', lOpt3: '(opcional)',
+    lProdBolsos: 'Número de bolsos producidos', lOpt4: '(opcional)',
+    lProdPeq: 'Artículos pequeña marroquinería', lOpt5: '(opcional)',
+    lProdOtros: 'Otros productos (especificar)', lOpt6: '(opcional)',
+    label2_4: '4 · Proyecto a Desarrollar en Ubrique',
+    lProyProd: 'Producción prevista a desarrollar', lOpt7: '(opcional)',
+    lProyVol: 'Volumen estimado de unidades', lOpt8: '(opcional)',
+    lProyPresup: 'Presupuesto aproximado (€)', lOpt9: '(opcional)',
+    lProyFecha: 'Fecha estimada de inicio del proyecto', lOpt10: '(opcional)',
+    label2_5: '5 · Necesidades Específicas del Proyecto',
+    lNec1: 'Fabricación integral', lNec2: 'Patronaje y desarrollo técnico',
+    lNec3: 'Prototipado', lNec4: 'Producción en serie',
+    lNec5: 'Asesoramiento técnico', lNec6: 'Otros',
+    lNecOtros: 'Especificar (si aplica)',
+    label2_6: '6 · Observaciones',
+    label2_7: '7 · Protección de Datos',
+    lGdpr: 'La información facilitada será utilizada exclusivamente para la gestión de la visita empresarial y la intermediación con las empresas asociadas a ASOPIEL.',
+    btnBack: 'Volver', btnSubmit: 'Solicitar acceso →',
+    toastOk: '✅ Solicitud recibida. Asopiel te enviará las credenciales de acceso.',
+    toastError: 'Error al enviar la solicitud.',
+    toastRequired: '⚠️ Completa los campos obligatorios.',
+    toastGdpr: '⚠️ Debes aceptar la protección de datos para continuar.'
+  },
+  en: {
+    heroEyebrow: 'Brand Access · Piel de Ubrique',
+    heroTitle: 'Find your ideal manufacturer in Ubrique',
+    heroDesc: 'Request access to the private directory of manufacturers and companies in the Piel de Ubrique sector. Asopiel will validate your application.',
+    stepLabel1: 'Brand details', stepLabel2: 'Business form',
+    label1: '1 · Brand Details',
+    lMarca: 'Brand name', lContacto: 'Contact person', lEmail: 'Email',
+    lTel: 'Phone', lOpt1: '(optional)', lPais: 'Country',
+    note1: 'Asopiel will review your application and send you directory access credentials.',
+    btnNext: 'Next →',
+    label2_1: '1 · Company Identification Details',
+    lEmpresa: 'Company name', lRepresentante: 'Representative full name', lCargo: 'Position',
+    lTel2: 'Phone', lEmail2: 'Email', lWeb: 'Website', lOpt2: '(optional)',
+    label2_2: '2 · Purpose of Contact',
+    lMot1: 'Search for manufacturing companies for specific production',
+    lMot2: 'Development of new models', lMot3: 'Brand launch', lMot4: 'Others',
+    lMotOtros: 'Specify (if applicable)',
+    label2_3: '3 · Production Data (Last Year)',
+    lProdTotal: 'Total production last year', lOpt3: '(optional)',
+    lProdBolsos: 'Number of handbags produced', lOpt4: '(optional)',
+    lProdPeq: 'Number of small leather goods', lOpt5: '(optional)',
+    lProdOtros: 'Number of other products (specify)', lOpt6: '(optional)',
+    label2_4: '4 · Project to be Developed in Ubrique',
+    lProyProd: 'Planned production in Ubrique', lOpt7: '(optional)',
+    lProyVol: 'Estimated volume of units', lOpt8: '(optional)',
+    lProyPresup: 'Approximate investment budget (€)', lOpt9: '(optional)',
+    lProyFecha: 'Estimated project start date', lOpt10: '(optional)',
+    label2_5: '5 · Specific Project Needs',
+    lNec1: 'Full manufacturing', lNec2: 'Pattern making and technical development',
+    lNec3: 'Prototyping', lNec4: 'Mass production',
+    lNec5: 'Technical consultancy', lNec6: 'Others',
+    lNecOtros: 'Specify (if applicable)',
+    label2_6: '6 · Remarks',
+    label2_7: '7 · Data Protection',
+    lGdpr: 'The information provided will be used exclusively for the management of the business visit and intermediation with ASOPIEL member companies.',
+    btnBack: 'Back', btnSubmit: 'Request access →',
+    toastOk: '✅ Application received. Asopiel will send you access credentials.',
+    toastError: 'Error sending the application.',
+    toastRequired: '⚠️ Please complete all required fields.',
+    toastGdpr: '⚠️ You must accept the data protection clause to continue.'
+  },
+  fr: {
+    heroEyebrow: 'Accès Marques · Piel de Ubrique',
+    heroTitle: 'Trouvez votre fabricant idéal à Ubrique',
+    heroDesc: "Demandez l'accès au répertoire privé des fabricants et entreprises du secteur Piel de Ubrique. Asopiel validera votre demande.",
+    stepLabel1: 'Données de la marque', stepLabel2: "Fiche d'entreprise",
+    label1: '1 · Données de la Marque',
+    lMarca: 'Nom de la marque', lContacto: 'Personne de contact', lEmail: 'Email',
+    lTel: 'Téléphone', lOpt1: '(facultatif)', lPais: 'Pays',
+    note1: "Asopiel examinera votre demande et vous enverra les identifiants d'accès au répertoire.",
+    btnNext: 'Suivant →',
+    label2_1: "1 · Données d'Identification de l'Entreprise",
+    lEmpresa: "Nom de l'entreprise", lRepresentante: 'Nom et prénom du représentant', lCargo: 'Fonction',
+    lTel2: 'Téléphone', lEmail2: 'Email', lWeb: 'Site web', lOpt2: '(facultatif)',
+    label2_2: '2 · Motif du Contact',
+    lMot1: 'Recherche d\'entreprises pour fabrication spécifique',
+    lMot2: 'Développement de nouveaux modèles', lMot3: 'Lancement de marque', lMot4: 'Autres',
+    lMotOtros: 'Préciser (si applicable)',
+    label2_3: '3 · Données de Production (Dernière Année)',
+    lProdTotal: "Production totale l'année dernière", lOpt3: '(facultatif)',
+    lProdBolsos: 'Nombre de sacs produits', lOpt4: '(facultatif)',
+    lProdPeq: 'Nombre d\'articles de petite maroquinerie', lOpt5: '(facultatif)',
+    lProdOtros: 'Nombre d\'autres produits (préciser)', lOpt6: '(facultatif)',
+    label2_4: '4 · Projet à Développer à Ubrique',
+    lProyProd: 'Production prévue à Ubrique', lOpt7: '(facultatif)',
+    lProyVol: 'Volume estimé d\'unités', lOpt8: '(facultatif)',
+    lProyPresup: 'Budget approximatif d\'investissement (€)', lOpt9: '(facultatif)',
+    lProyFecha: 'Date estimée de début du projet', lOpt10: '(facultatif)',
+    label2_5: '5 · Besoins Spécifiques du Projet',
+    lNec1: 'Fabrication complète', lNec2: 'Patronage et développement technique',
+    lNec3: 'Prototypage', lNec4: 'Production en série',
+    lNec5: 'Conseil technique', lNec6: 'Autres',
+    lNecOtros: 'Préciser (si applicable)',
+    label2_6: '6 · Observations',
+    label2_7: '7 · Protection des Données',
+    lGdpr: "Les informations fournies seront utilisées exclusivement pour la gestion de la visite d'entreprise et l'intermédiation avec les entreprises membres d'ASOPIEL.",
+    btnBack: 'Retour', btnSubmit: "Demander l'accès →",
+    toastOk: '✅ Demande reçue. Asopiel vous enverra les identifiants d\'accès.',
+    toastError: "Erreur lors de l'envoi de la demande.",
+    toastRequired: '⚠️ Veuillez compléter tous les champs obligatoires.',
+    toastGdpr: '⚠️ Vous devez accepter la protection des données pour continuer.'
+  }
+};
+
+let marcaLang = 'es';
+
+function setLang(lang, btn) {
+  marcaLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const t = MARCA_I18N[lang];
+  // Map element IDs → translation keys (when key differs from id)
+  const elMap = {
+    mHeroEyebrow: 'heroEyebrow', mHeroTitle: 'heroTitle', mHeroDesc: 'heroDesc',
+    mBtnNext: 'btnNext', mBtnBack: 'btnBack', mBtnSubmit: 'btnSubmit', note1: 'note1',
+    stepLabel1: 'stepLabel1', stepLabel2: 'stepLabel2', label1: 'label1'
+  };
+  const ids = ['mHeroEyebrow','mHeroTitle','mHeroDesc','stepLabel1','stepLabel2','label1',
+    'lMarca','lContacto','lEmail','lTel','lOpt1','lPais','note1','mBtnNext',
+    'label2_1','lEmpresa','lRepresentante','lCargo','lTel2','lEmail2','lWeb','lOpt2',
+    'label2_2','lMot1','lMot2','lMot3','lMot4','lMotOtros',
+    'label2_3','lProdTotal','lOpt3','lProdBolsos','lOpt4','lProdPeq','lOpt5','lProdOtros','lOpt6',
+    'label2_4','lProyProd','lOpt7','lProyVol','lOpt8','lProyPresup','lOpt9','lProyFecha','lOpt10',
+    'label2_5','lNec1','lNec2','lNec3','lNec4','lNec5','lNec6','lNecOtros',
+    'label2_6','label2_7','lGdpr','mBtnBack','mBtnSubmit'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      const key = elMap[id] || id;
+      if (t[key] !== undefined) el.textContent = t[key];
+    }
+  });
+}
+
+function marcaNextStep() {
   const marca = document.getElementById('m_marca').value.trim();
   const contacto = document.getElementById('m_contacto').value.trim();
   const email = document.getElementById('m_email').value.trim();
   const pais = document.getElementById('m_pais').value.trim();
-  if (!marca || !contacto || !email || !pais) { showToast('⚠️ Completa los campos obligatorios.', true); return; }
-  const body = { marca, contacto, email, pais, tel: document.getElementById('m_tel').value.trim(), brief: document.getElementById('m_brief').value.trim() };
+  const t = MARCA_I18N[marcaLang];
+  if (!marca || !contacto || !email || !pais) { showToast(t.toastRequired, true); return; }
+  document.getElementById('marcaStep1').classList.remove('active');
+  document.getElementById('marcaStep2').classList.add('active');
+  // Actualizar indicador
+  document.getElementById('stepDot1').className = 'step-dot done';
+  document.getElementById('stepDot2').className = 'step-dot active';
+  // Pre-rellenar email en paso 2 si está vacío
+  if (!document.getElementById('f2_email').value) document.getElementById('f2_email').value = email;
+  window.scrollTo(0, 0);
+}
+
+function marcaPrevStep() {
+  document.getElementById('marcaStep2').classList.remove('active');
+  document.getElementById('marcaStep1').classList.add('active');
+  document.getElementById('stepDot1').className = 'step-dot active';
+  document.getElementById('stepDot2').className = 'step-dot';
+  window.scrollTo(0, 0);
+}
+
+// ── Registro marca ────────────────────────────────────────────────────────────
+async function submitRegistroMarca() {
+  const t = MARCA_I18N[marcaLang];
+  const marca = document.getElementById('m_marca').value.trim();
+  const contacto = document.getElementById('m_contacto').value.trim();
+  const email = document.getElementById('m_email').value.trim();
+  const pais = document.getElementById('m_pais').value.trim();
+  if (!marca || !contacto || !email || !pais) { showToast(t.toastRequired, true); return; }
+  if (!document.getElementById('f2_gdpr').checked) { showToast(t.toastGdpr, true); return; }
+
+  // Recoger checkboxes motivo
+  const motivos = [];
+  ['f2_mot1','f2_mot2','f2_mot3'].forEach((id, i) => {
+    if (document.getElementById(id).checked) motivos.push(document.getElementById(`lMot${i+1}`).textContent);
+  });
+  if (document.getElementById('f2_mot4').checked) {
+    const otros = document.getElementById('f2_mot_otros').value.trim();
+    motivos.push(otros ? otros : document.getElementById('lMot4').textContent);
+  }
+
+  // Recoger checkboxes necesidades
+  const necesidades = [];
+  ['f2_nec1','f2_nec2','f2_nec3','f2_nec4','f2_nec5'].forEach((id, i) => {
+    if (document.getElementById(id).checked) necesidades.push(document.getElementById(`lNec${i+1}`).textContent);
+  });
+  if (document.getElementById('f2_nec6').checked) {
+    const otros = document.getElementById('f2_nec_otros').value.trim();
+    necesidades.push(otros ? otros : document.getElementById('lNec6').textContent);
+  }
+
+  const body = {
+    marca, contacto, email, pais,
+    tel: document.getElementById('m_tel').value.trim(),
+    idioma: marcaLang,
+    ficha: {
+      empresa: document.getElementById('f2_empresa').value.trim(),
+      representante: document.getElementById('f2_representante').value.trim(),
+      cargo: document.getElementById('f2_cargo').value.trim(),
+      tel: document.getElementById('f2_tel').value.trim(),
+      email: document.getElementById('f2_email').value.trim(),
+      web: document.getElementById('f2_web').value.trim(),
+      motivos,
+      mot_otros: document.getElementById('f2_mot_otros').value.trim(),
+      prod_total: document.getElementById('f2_prod_total').value.trim(),
+      prod_bolsos: document.getElementById('f2_prod_bolsos').value || '',
+      prod_peq: document.getElementById('f2_prod_peq').value || '',
+      prod_otros: document.getElementById('f2_prod_otros').value.trim(),
+      proy_prod: document.getElementById('f2_proy_prod').value.trim(),
+      proy_vol: document.getElementById('f2_proy_vol').value || '',
+      proy_presup: document.getElementById('f2_proy_presup').value || '',
+      proy_fecha: document.getElementById('f2_proy_fecha').value.trim(),
+      necesidades,
+      nec_otros: document.getElementById('f2_nec_otros').value.trim(),
+      observaciones: document.getElementById('f2_observaciones').value.trim(),
+    }
+  };
+
   loading(true, 'Enviando solicitud…');
   try {
     const data = await apiFetch('/marcas/registro', { method: 'POST', body: JSON.stringify(body) });
     loading(false);
     if (data.ok) {
-      showToast('✅ Solicitud recibida. Asopiel te enviará las credenciales de acceso.');
-      document.querySelectorAll('#viewRegistroMarca input, #viewRegistroMarca textarea').forEach(i => i.value = '');
-      // Volver a la landing
+      showToast(t.toastOk);
+      document.querySelectorAll('#viewRegistroMarca input, #viewRegistroMarca textarea').forEach(i => { i.value = ''; if(i.type==='checkbox') i.checked=false; });
+      marcaPrevStep();
       document.getElementById('appMain').style.display = 'none';
       document.getElementById('headerNav').style.display = '';
       document.getElementById('landingScreen').style.display = '';
-    } else { showToast('Error al enviar la solicitud.', true); }
+    } else { showToast(t.toastError, true); }
   } catch(e) { loading(false); showToast('Error de conexión.', true); }
 }
 
@@ -1212,10 +1603,12 @@ async function rechazarSolicitud(id) {
 }
 
 // ── Admin: marcas ─────────────────────────────────────────────────────────────
+let _marcasCache = [];
 async function cargarMarcas() {
   try {
     const data = await apiFetch('/marcas');
     if (!data.ok) return;
+    _marcasCache = data.data || [];
     const tbody = document.getElementById('tablaMarcas');
     if (!data.data.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">No hay solicitudes de marcas.</td></tr>'; return; }
     tbody.innerHTML = data.data.map(s => `
@@ -1225,11 +1618,74 @@ async function cargarMarcas() {
         <td>${s.pais || '—'}</td>
         <td><span class="badge badge-${s.estado === 'pendiente' ? 'pendiente' : s.estado === 'aprobada' ? 'activo' : 'revocado'}">${s.estado}</span></td>
         <td><div class="admin-actions">
+          ${s.ficha ? `<button class="btn-admin" onclick="abrirFichaMarca('${s.id}', this)" style="background:var(--verde-pale);color:var(--verde)">Ver ficha</button>` : ''}
           ${s.estado === 'pendiente' ? `<button class="btn-admin success" onclick="abrirAprobarMarca('${s.id}','${s.marca}')">Aprobar acceso</button>` : ''}
           ${s.estado === 'aprobada' ? `<button class="btn-admin danger" onclick="abrirRevocar('${s.id}','${s.marca}','${s.email}')">Revocar</button>` : ''}
         </div></td>
       </tr>`).join('');
   } catch(e) { console.error(e); }
+}
+
+function abrirFichaMarca(id, btnEl) {
+  // Intentar buscar en caché; si no, leer del DOM cercano
+  const s = _marcasCache.find(m => m.id === id);
+  const f = s && s.ficha ? s.ficha : null;
+  const nombre = s ? s.marca : '—';
+  document.getElementById('modalFichaMarcaNombre').textContent = nombre;
+
+  const body = document.getElementById('modalFichaMarcaBody');
+  if (!f) { body.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">No se rellenó la ficha empresarial.</p>'; document.getElementById('modalFichaMarca').classList.add('open'); return; }
+
+  const chk = arr => arr && arr.length ? arr.join(', ') : '—';
+  const val = v => v && v.toString().trim() ? v : '—';
+
+  body.innerHTML = `
+    <div class="ficha-section">
+      <div class="ficha-section-title">1 · Datos Identificativos</div>
+      <div class="ficha-dato-grid">
+        <div class="ficha-dato"><span class="ficha-dato-label">Empresa</span><span class="ficha-dato-val">${val(f.empresa)}</span></div>
+        <div class="ficha-dato"><span class="ficha-dato-label">Representante</span><span class="ficha-dato-val">${val(f.representante)}</span></div>
+        <div class="ficha-dato"><span class="ficha-dato-label">Cargo</span><span class="ficha-dato-val">${val(f.cargo)}</span></div>
+        <div class="ficha-dato"><span class="ficha-dato-label">Teléfono</span><span class="ficha-dato-val">${val(f.tel)}</span></div>
+        <div class="ficha-dato"><span class="ficha-dato-label">Email</span><span class="ficha-dato-val">${val(f.email)}</span></div>
+        <div class="ficha-dato"><span class="ficha-dato-label">Web</span><span class="ficha-dato-val">${val(f.web)}</span></div>
+      </div>
+    </div>
+    <div class="ficha-section">
+      <div class="ficha-section-title">2 · Motivo del Contacto</div>
+      <div class="ficha-dato-grid">
+        <div class="ficha-dato full"><span class="ficha-dato-label">Motivos</span><span class="ficha-dato-val">${chk(f.motivos)}</span></div>
+        ${f.mot_otros ? `<div class="ficha-dato full"><span class="ficha-dato-label">Otros (detalle)</span><span class="ficha-dato-val">${f.mot_otros}</span></div>` : ''}
+      </div>
+    </div>
+    <div class="ficha-section">
+      <div class="ficha-section-title">3 · Producción (Último Año)</div>
+      <div class="ficha-dato-grid">
+        <div class="ficha-dato"><span class="ficha-dato-label">Total</span><span class="ficha-dato-val">${val(f.prod_total)}</span></div>
+        <div class="ficha-dato"><span class="ficha-dato-label">Bolsos</span><span class="ficha-dato-val">${val(f.prod_bolsos)}</span></div>
+        <div class="ficha-dato"><span class="ficha-dato-label">Pequeña marroquinería</span><span class="ficha-dato-val">${val(f.prod_peq)}</span></div>
+        <div class="ficha-dato"><span class="ficha-dato-label">Otros productos</span><span class="ficha-dato-val">${val(f.prod_otros)}</span></div>
+      </div>
+    </div>
+    <div class="ficha-section">
+      <div class="ficha-section-title">4 · Proyecto en Ubrique</div>
+      <div class="ficha-dato-grid">
+        <div class="ficha-dato full"><span class="ficha-dato-label">Producción prevista</span><span class="ficha-dato-val">${val(f.proy_prod)}</span></div>
+        <div class="ficha-dato"><span class="ficha-dato-label">Volumen (uds)</span><span class="ficha-dato-val">${val(f.proy_vol)}</span></div>
+        <div class="ficha-dato"><span class="ficha-dato-label">Presupuesto (€)</span><span class="ficha-dato-val">${val(f.proy_presup)}</span></div>
+        <div class="ficha-dato"><span class="ficha-dato-label">Fecha estimada</span><span class="ficha-dato-val">${val(f.proy_fecha)}</span></div>
+      </div>
+    </div>
+    <div class="ficha-section">
+      <div class="ficha-section-title">5 · Necesidades del Proyecto</div>
+      <div class="ficha-dato-grid">
+        <div class="ficha-dato full"><span class="ficha-dato-label">Servicios requeridos</span><span class="ficha-dato-val">${chk(f.necesidades)}</span></div>
+        ${f.nec_otros ? `<div class="ficha-dato full"><span class="ficha-dato-label">Otros (detalle)</span><span class="ficha-dato-val">${f.nec_otros}</span></div>` : ''}
+      </div>
+    </div>
+    ${f.observaciones ? `<div class="ficha-section"><div class="ficha-section-title">6 · Observaciones</div><p style="font-size:13px;color:var(--ink);margin:0">${f.observaciones}</p></div>` : ''}
+  `;
+  document.getElementById('modalFichaMarca').classList.add('open');
 }
 
 function abrirAprobarMarca(id, nombre) {
@@ -1384,7 +1840,7 @@ function mostrarNewsletter() {
   const banner = document.getElementById('newsletterBanner');
   if (!banner || !currentUser) return;
 
-  const esMarca = currentUser.rol === 'marca';
+  const esMarca = currentUser.role === 'marca';
   const icon    = document.getElementById('newsletterIcon');
   const title   = document.getElementById('newsletterTitle');
   const desc    = document.getElementById('newsletterDesc');
@@ -1421,7 +1877,7 @@ let tallerAccesoEstado = null; // 'auto' | 'aprobado' | 'pendiente' | 'sin-solic
 async function cargarVistaTalleres() {
   const contenedor = document.getElementById('talleresContent');
   // Admin ve directamente el directorio completo
-  if (currentUser.rol === 'admin') {
+  if (currentUser.role === 'admin') {
     await renderTalleresDirectorio(contenedor, true);
     return;
   }
