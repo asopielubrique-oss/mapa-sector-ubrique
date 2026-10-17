@@ -423,7 +423,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
           <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
         </div>
         <button class="btn-login" onclick="doLogin()">Entrar</button>
-        <p class="login-note">¿Sin acceso? <a href="mailto:info@asopiel.es" style="color:var(--verde)">Contacta con Asopiel</a></p>
+        <p class="login-note">¿Sin acceso? Escribe a <strong id="emailAsopiel">info@asopiel.com</strong> <button type="button" onclick="copiarEmailAsopiel(this)" style="background:none;border:none;color:var(--verde);font-weight:600;cursor:pointer;font-family:var(--font);font-size:inherit;text-decoration:underline">Copiar</button></p>
       </div>
 
       <!-- Panel marca -->
@@ -1073,6 +1073,25 @@ function doLogout() {
   document.getElementById('loginPass').value = '';
   document.getElementById('loginUserMarca').value = '';
   document.getElementById('loginPassMarca').value = '';
+}
+
+function copiarEmailAsopiel(btn) {
+  const email = document.getElementById('emailAsopiel').textContent;
+  const marcarCopiado = () => {
+    btn.textContent = 'Copiado';
+    setTimeout(() => { btn.textContent = 'Copiar'; }, 2000);
+  };
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(email).then(marcarCopiado).catch(() => showToast('No se pudo copiar. Escribe: ' + email, true));
+  } else {
+    const ta = document.createElement('textarea');
+    ta.value = email;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); marcarCopiado(); }
+    catch(e) { showToast('No se pudo copiar. Escribe: ' + email, true); }
+    ta.remove();
+  }
 }
 
 function irALogin() {
@@ -1762,7 +1781,7 @@ async function confirmarRevocar() {
   document.getElementById('modalRevocar').classList.remove('open');
   // Abrir mailto
   const asunto = encodeURIComponent('Notificación de revocación de acceso — Mapa del Sector Piel de Ubrique');
-  const cuerpo = encodeURIComponent(`Estimado/a usuario/a,\n\nLe comunicamos que su acceso al Mapa del Sector Piel de Ubrique ha sido revocado.\n\nMotivo: ${motivo}\n\nSi tiene alguna consulta, puede contactar con Asopiel en info@asopiel.es.\n\nAtentamente,\nAsopiel — Asociación de Empresarios del Sector de la Piel de Ubrique`);
+  const cuerpo = encodeURIComponent(`Estimado/a usuario/a,\n\nLe comunicamos que su acceso al Mapa del Sector Piel de Ubrique ha sido revocado.\n\nMotivo: ${motivo}\n\nSi tiene alguna consulta, puede contactar con Asopiel en info@asopiel.com.\n\nAtentamente,\nAsopiel — Asociación de Empresarios del Sector de la Piel de Ubrique`);
   window.location.href = `mailto:${pendingRevocarEmail}?subject=${asunto}&body=${cuerpo}`;
   // Revocar en API
   loading(true, 'Revocando acceso…');
@@ -1854,7 +1873,7 @@ window.confirmarRevocar = async function() {
   if (!motivo) { showToast('⚠️ Escribe el motivo.', true); return; }
   document.getElementById('modalRevocar').classList.remove('open');
   const asunto = encodeURIComponent('Notificación de revocación de acceso — Mapa del Sector Piel de Ubrique');
-  const cuerpo = encodeURIComponent(`Estimado/a usuario/a,\n\nLe comunicamos que su acceso al Mapa del Sector Piel de Ubrique ha sido revocado.\n\nMotivo: ${motivo}\n\nSi tiene alguna consulta, puede contactar con Asopiel en info@asopiel.es.\n\nAtentamente,\nAsopiel`);
+  const cuerpo = encodeURIComponent(`Estimado/a usuario/a,\n\nLe comunicamos que su acceso al Mapa del Sector Piel de Ubrique ha sido revocado.\n\nMotivo: ${motivo}\n\nSi tiene alguna consulta, puede contactar con Asopiel en info@asopiel.com.\n\nAtentamente,\nAsopiel`);
   window.location.href = `mailto:${pendingRevocarEmail}?subject=${asunto}&body=${cuerpo}`;
   const ruta = window._revocarEsUsuario ? `/usuarios/${pendingRevocarId}/revocar` : `/marcas/${pendingRevocarId}/revocar`;
   window._revocarEsUsuario = false;
