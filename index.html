@@ -1001,7 +1001,9 @@ async function apiFetch(path, opts = {}) {
   const headers = { 'Content-Type': 'application/json' };
   if (authToken) headers['Authorization'] = 'Bearer ' + authToken;
   const res = await fetch(API + path, { ...opts, headers: { ...headers, ...(opts.headers || {}) } });
-  return res.json();
+  const text = await res.text();
+  try { return JSON.parse(text); }
+  catch { return { ok: false, error: 'Respuesta no válida (' + res.status + ')' }; }
 }
 
 // ── Login ─────────────────────────────────────────────────────────────────────
@@ -1772,10 +1774,6 @@ async function darDeBaja(id) {
 // ── Admin: usuarios ───────────────────────────────────────────────────────────
 async function cargarUsuarios() {
   try {
-    // /usuarios no existe en el Worker actual — mostrar aviso
-    const tbodyU = document.getElementById('tablaUsuarios');
-    if (tbodyU) tbodyU.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:32px">Módulo de usuarios pendiente de activar.</td></tr>';
-    return;
     const data = await apiFetch('/usuarios');
     if (!data.ok) return;
     const cats = { 'asociado-fabricante': 'Fab.Asopiel', 'no-asociado-fabricante': 'Fabricante', 'asociado-taller': 'Taller Asopiel', 'no-asociado-taller': 'Taller', 'asociado-proveedor': 'Prov.Asopiel', 'no-asociado-proveedor': 'Proveedor', 'servicios': 'Servicios' };
@@ -1996,13 +1994,8 @@ async function solicitarAccesoTalleres() {
 // ── Admin: solicitudes acceso talleres ────────────────────────────────────────
 async function cargarTalleresSolicitudes() {
   try {
-    // Ruta no implementada en Worker actual — mostrar aviso
-    const tbodyT = document.getElementById('tablaTalleresSol');
-    if (tbodyT) { tbodyT.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">Módulo de talleres pendiente de activar.</td></tr>'; }
-    document.getElementById('kpiTallerPend').textContent = '—';
-    document.getElementById('kpiTallerAuto').textContent = '—';
-    document.getElementById('kpiTallerAprob').textContent = '—';
-    return;
+    const data = await apiFetch('/talleres/solicitudes');
+    if (!data.ok) return;
     const solicitudes = data.data || [];
     // KPIs
     document.getElementById('kpiTallerPend').textContent = solicitudes.filter(s => s.estado === 'pendiente').length;
