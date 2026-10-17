@@ -377,6 +377,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
       <div class="landing-cta-group">
         <button class="btn-landing-primary" onclick="irALogin()">Acceder al directorio →</button>
         <button class="btn-landing-outline" onclick="irARegistroMarca()">Soy una marca · Solicitar acceso</button>
+        <button class="btn-landing-outline" onclick="irARegistroEmpresa()">Soy fabricante · Solicitar alta</button>
       </div>
     </div>
 
@@ -519,12 +520,9 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
         <div class="filter-select">
           <select id="filtroCategoria" onchange="renderEmpresas()">
             <option value="">Todas las categorías</option>
-            <option value="asociado-fabricante">Fabricantes (asociados Asopiel)</option>
-            <option value="no-asociado-fabricante">Fabricantes (no asociados)</option>
-            <option value="asociado-taller">Taller auxiliar (asociado Asopiel)</option>
-            <option value="no-asociado-taller">Taller auxiliar (no asociado)</option>
-            <option value="asociado-proveedor">Proveedores (asociados Asopiel)</option>
-            <option value="no-asociado-proveedor">Proveedores (no asociados)</option>
+            <option value="fabricante">Fabricantes</option>
+            <option value="taller">Talleres auxiliares</option>
+            <option value="proveedor">Proveedores</option>
             <option value="servicios">Servicios a empresas</option>
           </select>
         </div>
@@ -1054,12 +1052,11 @@ function iniciarSesion(data) {
   document.getElementById('navAdmin').style.display = currentUser.role === 'admin' ? '' : 'none';
   document.getElementById('navRegistro').style.display = currentUser.role === 'admin' ? '' : 'none';
   // Talleres: visible para fabricantes (asociado o no) y admin
-  const esFabricante = currentUser.role === 'empresa' && currentUser.categoria &&
-    (currentUser.categoria === 'asociado-fabricante' || currentUser.categoria === 'no-asociado-fabricante');
+  const esFabricante = currentUser.role === 'empresa' && currentUser.tipo === 'fabricante';
   document.getElementById('navTalleres').style.display = (esFabricante || currentUser.role === 'admin') ? '' : 'none';
   // Subtítulo directorio para marca
   if (currentUser.role === 'marca' && currentUser.permisos) {
-    const cats = { 'asociado-fabricante': 'Fabricantes Asopiel', 'no-asociado-fabricante': 'Fabricantes', 'asociado-taller': 'Talleres Asopiel', 'no-asociado-taller': 'Talleres', 'asociado-proveedor': 'Proveedores Asopiel', 'no-asociado-proveedor': 'Proveedores', 'servicios': 'Servicios' };
+    const cats = { 'fabricante': 'Fabricantes', 'taller': 'Talleres auxiliares', 'proveedor': 'Proveedores', 'servicios': 'Servicios' };
     document.getElementById('dirSubtitle').textContent = 'Acceso a: ' + currentUser.permisos.map(p => cats[p] || p).join(' · ');
   }
   cargarDirectorio();
@@ -1089,6 +1086,14 @@ function irARegistroMarca() {
   document.getElementById('appMain').style.display = 'block';
   document.getElementById('headerNav').style.display = 'none';
   showView('registroMarca');
+}
+
+function irARegistroEmpresa() {
+  document.getElementById('landingScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('appMain').style.display = 'block';
+  document.getElementById('headerNav').style.display = 'none';
+  showView('registro');
 }
 
 document.addEventListener('keydown', e => {
@@ -1141,10 +1146,10 @@ async function cargarDirectorio() {
 
 function updateStats() {
   document.getElementById('statTotal').textContent = empresasData.length;
-  document.getElementById('statFab').textContent = empresasData.filter(e => ['asociado-fabricante','no-asociado-fabricante'].includes(e.categoria)).length;
-  document.getElementById('statTaller').textContent = empresasData.filter(e => ['asociado-taller','no-asociado-taller'].includes(e.categoria)).length;
-  document.getElementById('statProv').textContent = empresasData.filter(e => ['asociado-proveedor','no-asociado-proveedor'].includes(e.categoria)).length;
-  document.getElementById('statServ').textContent = empresasData.filter(e => e.categoria === 'servicios').length;
+  document.getElementById('statFab').textContent = empresasData.filter(e => baseCat(e.categoria) === 'fabricante').length;
+  document.getElementById('statTaller').textContent = empresasData.filter(e => baseCat(e.categoria) === 'taller').length;
+  document.getElementById('statProv').textContent = empresasData.filter(e => baseCat(e.categoria) === 'proveedor').length;
+  document.getElementById('statServ').textContent = empresasData.filter(e => baseCat(e.categoria) === 'servicios').length;
 }
 
 function populateActividadesFilter() {
@@ -1155,7 +1160,15 @@ function populateActividadesFilter() {
   [...all].sort().forEach(a => { const o = document.createElement('option'); o.value = a; o.textContent = a; sel.appendChild(o); });
 }
 
+/** Tipo sin condición de asociado (para filtros y estadísticas). */
+function baseCat(c) {
+  return String(c || '').replace(/^(no-)?asociado-/, '').replace('taller-auxiliar', 'taller');
+}
+
 const CAT_LABEL = {
+  'fabricante': 'Fabricante',
+  'taller': 'Taller auxiliar',
+  'proveedor': 'Proveedor',
   'asociado-fabricante':    'Fabricante · Asopiel',
   'no-asociado-fabricante': 'Fabricante',
   'asociado-taller':        'Taller auxiliar · Asopiel',
@@ -1165,6 +1178,9 @@ const CAT_LABEL = {
   'servicios':              'Servicios'
 };
 const CAT_BADGE = {
+  'fabricante': 'badge-noasoc-fab',
+  'taller': 'badge-aux',
+  'proveedor': 'badge-aux',
   'asociado-fabricante':    'badge-asoc-fab',
   'no-asociado-fabricante': 'badge-noasoc-fab',
   'asociado-taller':        'badge-aux',
@@ -1174,6 +1190,9 @@ const CAT_BADGE = {
   'servicios':              'badge-serv'
 };
 const CAT_AVATAR = {
+  'fabricante': 'cat-no-asociado-fabricante',
+  'taller': 'cat-auxiliar',
+  'proveedor': 'cat-auxiliar',
   'asociado-fabricante':    'cat-asociado-fabricante',
   'no-asociado-fabricante': 'cat-no-asociado-fabricante',
   'asociado-taller':        'cat-auxiliar',
@@ -1189,7 +1208,7 @@ function renderEmpresas() {
   const act = document.getElementById('filtroActividad').value;
   const cap = document.getElementById('filtroCapacidad').value;
   const f = empresasData.filter(e => {
-    if (cat && e.categoria !== cat) return false;
+    if (cat && baseCat(e.categoria) !== cat) return false;
     if (act && !(e.actividades || []).includes(act)) return false;
     if (cap && e.capacidad !== cap) return false;
     if (q && ![e.razon, e.categoria, ...(e.actividades || []), e.dir].join(' ').toLowerCase().includes(q)) return false;
@@ -1282,23 +1301,36 @@ async function submitFormEmpresa() {
   if (!razon || !email || !categoria || !capacidad) { showToast('⚠️ Completa los campos obligatorios.', true); return; }
   const actividades = [...document.querySelectorAll('.actividades-group.visible input:checked')].map(i => i.value);
   const body = {
-    razon, email, categoria, capacidad, actividades,
+    tipo: 'empresa',
+    razon,
+    nombre: razon,
+    email: email.toLowerCase(),
+    categoria,
+    asociado: false,
+    capacidad,
+    especialidades: actividades,
     responsable: document.getElementById('f_responsable').value.trim(),
-    tel: document.getElementById('f_tel').value.trim(),
-    dir: document.getElementById('f_dir').value.trim(),
+    telefono: document.getElementById('f_tel').value.trim(),
+    direccion: document.getElementById('f_dir').value.trim(),
     web: document.getElementById('f_web').value.trim(),
     trab_prod: parseInt(document.getElementById('f_trab_prod').value) || 0,
     trab_total: parseInt(document.getElementById('f_trab_total').value) || 0,
   };
   loading(true, 'Enviando solicitud…');
   try {
-    const data = await apiFetch('/empresas', { method: 'POST', body: JSON.stringify(body) });
+    const data = await apiFetch('/register', { method: 'POST', body: JSON.stringify(body) });
     loading(false);
     if (data.id || data.ok) {
       showToast('✅ Solicitud enviada. Asopiel te contactará por email.');
       document.querySelectorAll('#viewRegistro input, #viewRegistro textarea').forEach(i => { i.value = ''; if(i.type==='checkbox'||i.type==='radio') i.checked=false; });
       onTipoChange();
-      showView('directorio', document.getElementById('navDirectorio'));
+      if (currentUser) {
+        showView('directorio', document.getElementById('navDirectorio'));
+      } else {
+        document.getElementById('appMain').style.display = 'none';
+        document.getElementById('headerNav').style.display = '';
+        document.getElementById('landingScreen').style.display = '';
+      }
     } else { showToast('Error al enviar la solicitud.', true); }
   } catch(e) { loading(false); showToast('Error de conexión.', true); }
 }
@@ -1742,6 +1774,16 @@ async function confirmarRevocar() {
 }
 
 // ── Admin: empresas activas ───────────────────────────────────────────────────
+async function toggleAsociado(id, valor) {
+  loading(true, 'Guardando…');
+  try {
+    const data = await apiFetch(`/empresas/${id}`, { method: 'PUT', body: JSON.stringify({ asociado: valor }) });
+    loading(false);
+    if (data.id) { showToast(valor ? 'Empresa marcada como asociada.' : 'Empresa marcada como no asociada.'); cargarAdminEmpresas(); }
+    else showToast('Error al guardar.', true);
+  } catch(e) { loading(false); showToast('Error de conexión.', true); }
+}
+
 async function cargarAdminEmpresas() {
   try {
     const data = await apiFetch('/empresas');
@@ -1755,6 +1797,7 @@ async function cargarAdminEmpresas() {
         <td>${e.capacidad === 'Sí' ? '✅ Sí' : '⏸ No'}</td>
         <td><div class="admin-actions">
           <button class="btn-admin" onclick="openModal('${e.id}')">Ver ficha</button>
+          <button class="btn-admin" onclick="toggleAsociado('${e.id}', ${!e.asociado})">${e.asociado ? 'Quitar asociado' : 'Marcar asociado'}</button>
           <button class="btn-admin danger" onclick="darDeBaja('${e.id}')">Dar de baja</button>
         </div></td>
       </tr>`).join('');
@@ -1898,7 +1941,7 @@ async function cargarVistaTalleres() {
         </div>`;
     } else {
       // Sin solicitud — mostrar banner de solicitud
-      const esAsopiel = currentUser.categoria === 'asociado-fabricante';
+      const esAsopiel = false; // mismo flujo para todos: la intranet no distingue asociados
       contenedor.innerHTML = `
         <div class="talleres-info-banner">
           <span>${esAsopiel ? '✅' : 'ℹ️'}</span>
@@ -1947,7 +1990,7 @@ async function renderTalleresDirectorio(contenedor, esAdmin) {
               <div class="taller-avatar">${t.razon.charAt(0)}</div>
               <div>
                 <div class="taller-nombre">${t.razon}</div>
-                <span class="ficha-tipo ${t.categoria === 'asociado-taller' ? 'badge-asoc-fab' : 'badge-aux'}">${CAT_LABEL[t.categoria] || t.categoria}</span>
+                <span class="ficha-tipo badge-aux">${CAT_LABEL[t.categoria] || t.categoria}</span>
               </div>
             </div>
             <div class="taller-ficha-body">
