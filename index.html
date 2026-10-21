@@ -1946,14 +1946,39 @@ function abrirFichaMarca(id, btnEl) {
   const f = s && s.ficha ? s.ficha : null;
   const nombre = s ? s.marca : '—';
   document.getElementById('modalFichaMarcaNombre').textContent = nombre;
+  document.getElementById('modalFichaMarcaSub').textContent = s && s.estado === 'aprobada' ? 'Ficha empresarial · Acceso concedido' : 'Ficha empresarial';
 
   const body = document.getElementById('modalFichaMarcaBody');
-  if (!f) { body.innerHTML = '<p style="color:var(--ink-soft);font-size:13px">No se rellenó la ficha empresarial.</p>'; document.getElementById('modalFichaMarca').classList.add('open'); return; }
+
+  // Sección de permisos concedidos (si la marca está aprobada)
+  const CAT_NOMBRES = {
+    'asociado-fabricante': 'Fabricantes (asociados Asopiel)',
+    'no-asociado-fabricante': 'Fabricantes (no asociados)',
+    'asociado-taller': 'Talleres auxiliares (asociados Asopiel)',
+    'no-asociado-taller': 'Talleres auxiliares (no asociados)',
+    'asociado-proveedor': 'Proveedores (asociados Asopiel)',
+    'no-asociado-proveedor': 'Proveedores (no asociados)',
+    'servicios': 'Servicios a empresas',
+  };
+  let permisosHtml = '';
+  if (s && s.estado === 'aprobada' && Array.isArray(s.permisos) && s.permisos.length) {
+    permisosHtml = `
+    <div class="ficha-section" style="background:var(--verde-pale);border:1px solid var(--verde);border-radius:var(--radius);padding:14px 16px;margin-bottom:14px">
+      <div class="ficha-section-title" style="color:var(--verde)">✅ Acceso concedido al directorio</div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">
+        ${s.permisos.map(p => `<span style="background:var(--verde);color:white;border-radius:20px;padding:3px 10px;font-size:11px;font-weight:600">${CAT_NOMBRES[p] || p}</span>`).join('')}
+      </div>
+    </div>`;
+  } else if (s && s.estado === 'aprobada') {
+    permisosHtml = `<div class="ficha-section" style="color:var(--ink-soft);font-size:13px">Acceso aprobado pero sin epígrafes registrados.</div>`;
+  }
+
+  if (!f) { body.innerHTML = permisosHtml + '<p style="color:var(--ink-soft);font-size:13px">No se rellenó la ficha empresarial.</p>'; document.getElementById('modalFichaMarca').classList.add('open'); return; }
 
   const chk = arr => arr && arr.length ? arr.join(', ') : '—';
   const val = v => v && v.toString().trim() ? v : '—';
 
-  body.innerHTML = `
+  body.innerHTML = permisosHtml + `
     <div class="ficha-section">
       <div class="ficha-section-title">1 · Datos Identificativos</div>
       <div class="ficha-dato-grid">
