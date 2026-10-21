@@ -161,7 +161,25 @@ body { font-family: var(--font); background: var(--bg); color: var(--ink); min-h
 .ficha { background: var(--blanco); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow); transition: box-shadow 0.2s, transform 0.2s; cursor: pointer; }
 .ficha:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
 .ficha-header { padding: 18px 22px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; gap: 12px; }
-.ficha-avatar { width: 44px; height: 44px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: white; flex-shrink: 0; }
+.ficha-avatar { width: 44px; height: 44px; border-radius: var(--radius); display: flex; align-items: center; justify-content: center; font-family: 'Playfair Display', serif; font-size: 19px; font-weight: 700; color: white; flex-shrink: 0; overflow: hidden; }
+.ficha-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); }
+/* Galería de fotos en modal */
+.foto-galeria { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+.foto-galeria-item { aspect-ratio: 4/3; border-radius: var(--radius); overflow: hidden; background: var(--verde-pale); display: flex; align-items: center; justify-content: center; position: relative; }
+.foto-galeria-item img { width: 100%; height: 100%; object-fit: cover; }
+.foto-galeria-item.logo-item { grid-column: span 3; aspect-ratio: 16/5; }
+/* Upload de imágenes (admin) */
+.img-upload-grid { display: grid; grid-template-columns: 1fr repeat(3,1fr); gap: 8px; margin-top: 10px; }
+.img-slot { border: 2px dashed var(--border); border-radius: var(--radius); padding: 10px; text-align: center; background: var(--bg); position: relative; cursor: pointer; transition: border-color 0.2s; }
+.img-slot:hover { border-color: var(--verde); }
+.img-slot.has-img { border-style: solid; border-color: var(--verde-pale); padding: 0; overflow: hidden; }
+.img-slot img { width: 100%; height: 80px; object-fit: cover; display: block; }
+.img-slot-label { font-size: 10px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.img-slot-hint { font-size: 10px; color: var(--ink-soft); }
+.img-slot-del { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.55); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; cursor: pointer; display: none; align-items: center; justify-content: center; }
+.img-slot.has-img .img-slot-del { display: flex; }
+.img-upload-progress { height: 3px; background: var(--verde-pale); border-radius: 2px; margin-top: 6px; overflow: hidden; display: none; }
+.img-upload-progress-bar { height: 100%; background: var(--verde); width: 0%; transition: width 0.3s; }
 .cat-asociado-fabricante { background: #1A3D2E; }
 .cat-no-asociado-fabricante { background: #2B6B4A; }
 .cat-auxiliar { background: #2E5E47; }
@@ -1270,6 +1288,16 @@ async function cargarDirectorio() {
     const data = await apiFetch('/empresas');
     loading(false);
     empresasData = Array.isArray(data) ? data : (data.data || []);
+    // Las imágenes vienen incluidas en la respuesta /empresas (campo .images)
+    // Normalizamos a _images para uso en el frontend
+    empresasData.forEach(e => {
+      e._images = {};
+      if (e.images) {
+        for (const [slot, url] of Object.entries(e.images)) {
+          if (url) e._images[slot] = url;
+        }
+      }
+    });
     updateStats();
     populateActividadesFilter();
     renderEmpresas();
@@ -1350,9 +1378,12 @@ function renderEmpresas() {
   if (!f.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>No hay empresas que coincidan con los filtros.</p></div>'; return; }
   grid.innerHTML = f.map(e => {
     const acts = (e.actividades || []).slice(0, 3).map(a => `<span class="act-tag">${a}</span>`).join('') + ((e.actividades||[]).length > 3 ? `<span class="act-tag">+${(e.actividades||[]).length - 3}</span>` : '');
+    const logoHtml = (e._images && e._images.logo)
+      ? `<div class="ficha-avatar ${CAT_AVATAR[e.categoria] || 'cat-servicios'}"><img src="${e._images.logo}" alt="${e.razon}" loading="lazy" onerror="this.parentElement.innerHTML='${e.razon.charAt(0)}'"></div>`
+      : `<div class="ficha-avatar ${CAT_AVATAR[e.categoria] || 'cat-servicios'}">${e.razon.charAt(0)}</div>`;
     return `<div class="ficha" onclick="openModal('${e.id}')">
       <div class="ficha-header">
-        <div class="ficha-avatar ${CAT_AVATAR[e.categoria] || 'cat-servicios'}">${e.razon.charAt(0)}</div>
+        ${logoHtml}
         <div class="ficha-meta">
           <div class="ficha-nombre">${e.razon}</div>
           <span class="ficha-tipo ${CAT_BADGE[e.categoria] || 'badge-serv'}">${CAT_LABEL[e.categoria] || e.categoria}</span>
@@ -1380,14 +1411,40 @@ function clearFiltros() {
 }
 
 // ── Modal ficha ───────────────────────────────────────────────────────────────
+let _modalEmpresaId = null;
+
 function openModal(id) {
   const e = empresasData.find(x => x.id === id); if (!e) return;
-  document.getElementById('modalAvatar').textContent = e.razon.charAt(0);
-  document.getElementById('modalAvatar').className = 'ficha-avatar ' + (CAT_AVATAR[e.categoria] || 'cat-servicios');
+  _modalEmpresaId = id;
+  const esAdmin = currentUser && currentUser.role === 'admin';
+
+  // Header: logo o inicial
+  const avatarEl = document.getElementById('modalAvatar');
+  avatarEl.className = 'ficha-avatar ' + (CAT_AVATAR[e.categoria] || 'cat-servicios');
+  if (e._images && e._images.logo) {
+    avatarEl.innerHTML = `<img src="${e._images.logo}" alt="${e.razon}" onerror="this.parentElement.textContent='${e.razon.charAt(0)}'">`;
+  } else {
+    avatarEl.textContent = e.razon.charAt(0);
+  }
   document.getElementById('modalNombre').textContent = e.razon;
   const b = document.getElementById('modalCategoriaBadge');
   b.textContent = CAT_LABEL[e.categoria] || e.categoria;
   b.className = 'ficha-tipo ' + (CAT_BADGE[e.categoria] || 'badge-serv');
+
+  // Galería de fotos (solo si hay alguna)
+  const imgs = e._images || {};
+  const fotoSlots = ['foto-1', 'foto-2', 'foto-3'].filter(s => imgs[s]);
+  const galeriaHtml = fotoSlots.length ? `
+    <div class="modal-section">
+      <p class="modal-section-title">Fotografías</p>
+      <div class="foto-galeria">
+        ${fotoSlots.map(s => `<div class="foto-galeria-item"><img src="${imgs[s]}" alt="Foto" loading="lazy"></div>`).join('')}
+      </div>
+    </div>` : '';
+
+  // Bloque de gestión de imágenes (solo admin)
+  const uploadHtml = esAdmin ? buildUploadBlock(e) : '';
+
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-section"><p class="modal-section-title">Contacto</p>
       <div class="modal-dato-grid">
@@ -1407,8 +1464,103 @@ function openModal(id) {
     </div>
     <div class="modal-section"><p class="modal-section-title">Actividades</p>
       <div style="display:flex;flex-wrap:wrap;gap:7px">${(e.actividades||[]).map(a => `<span class="act-tag" style="font-size:12px;padding:5px 10px">${a}</span>`).join('')}</div>
-    </div>`;
+    </div>
+    ${galeriaHtml}
+    ${uploadHtml}`;
   document.getElementById('modalOverlay').classList.add('open');
+}
+
+// ── Upload de imágenes (admin) ────────────────────────────────────────────────
+
+function buildUploadBlock(e) {
+  const imgs = e._images || {};
+  const slots = [
+    { key: 'logo',   label: 'Logo', hint: 'JPG/PNG/WebP · máx 5 MB' },
+    { key: 'foto-1', label: 'Foto 1', hint: 'Taller o producto' },
+    { key: 'foto-2', label: 'Foto 2', hint: 'Taller o producto' },
+    { key: 'foto-3', label: 'Foto 3', hint: 'Taller o producto' },
+  ];
+  const slotsHtml = slots.map(s => {
+    const hasImg = !!imgs[s.key];
+    return `<div class="img-slot ${hasImg ? 'has-img' : ''}" id="slot-${s.key}" onclick="triggerUpload('${e.id}','${s.key}')">
+      ${hasImg ? `<img src="${imgs[s.key]}" alt="${s.label}">` : `<div class="img-slot-label">${s.label}</div><div class="img-slot-hint">${s.hint}</div>`}
+      ${hasImg ? `<button class="img-slot-del" onclick="event.stopPropagation();deleteImagen('${e.id}','${s.key}')" title="Eliminar">×</button>` : ''}
+      <div class="img-upload-progress" id="prog-${s.key}"><div class="img-upload-progress-bar" id="progbar-${s.key}"></div></div>
+    </div>`;
+  }).join('');
+  return `<div class="modal-section" style="border-top:1px solid var(--border);margin-top:4px;padding-top:14px">
+    <p class="modal-section-title" style="color:var(--ink-soft)">📷 Imágenes (admin)</p>
+    <div class="img-upload-grid">${slotsHtml}</div>
+    <input type="file" id="fileInputImg" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="onFileSelected(event)">
+  </div>`;
+}
+
+let _uploadContext = { empresaId: null, slot: null };
+
+function triggerUpload(empresaId, slot) {
+  _uploadContext = { empresaId, slot };
+  const inp = document.getElementById('fileInputImg');
+  if (inp) { inp.value = ''; inp.click(); }
+}
+
+async function onFileSelected(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const { empresaId, slot } = _uploadContext;
+  const progEl = document.getElementById(`prog-${slot}`);
+  const barEl  = document.getElementById(`progbar-${slot}`);
+  if (progEl) { progEl.style.display = 'block'; barEl.style.width = '10%'; }
+  try {
+    // 1. Pedir presigned URL al worker
+    const res = await apiFetch(`/empresas/${empresaId}/upload`, {
+      method: 'POST',
+      body: JSON.stringify({ slot, contentType: file.type, fileSize: file.size })
+    });
+    if (!res.presignedUrl) throw new Error(res.error || 'Sin URL de subida');
+    if (barEl) barEl.style.width = '40%';
+
+    // 2. Subir directamente a R2 via presigned PUT
+    const putRes = await fetch(res.presignedUrl, {
+      method: 'PUT',
+      headers: { 'Content-Type': file.type },
+      body: file
+    });
+    if (!putRes.ok) throw new Error('Error al subir a R2: ' + putRes.status);
+    if (barEl) barEl.style.width = '75%';
+
+    // 3. Confirmar al worker (nos devuelve la URL pública final)
+    const confirmRes = await apiFetch(`/empresas/${empresaId}/images/confirm`, {
+      method: 'POST',
+      body: JSON.stringify({ slot, key: res.key })
+    });
+    if (barEl) barEl.style.width = '100%';
+
+    // 4. Actualizar estado local y refrescar slot
+    const e = empresasData.find(x => x.id === empresaId);
+    if (e) {
+      if (!e._images) e._images = {};
+      e._images[slot] = confirmRes.url;
+      renderEmpresas(); // refresca tarjetas
+    }
+    setTimeout(() => {
+      openModal(empresaId); // reabrir para mostrar imagen
+    }, 300);
+    showToast('✅ Imagen subida correctamente');
+  } catch(err) {
+    if (progEl) progEl.style.display = 'none';
+    showToast('Error al subir la imagen: ' + err.message, true);
+  }
+}
+
+async function deleteImagen(empresaId, slot) {
+  if (!confirm(`¿Eliminar esta imagen (${slot})?`)) return;
+  try {
+    await apiFetch(`/empresas/${empresaId}/images/${slot}`, { method: 'DELETE' });
+    const e = empresasData.find(x => x.id === empresaId);
+    if (e && e._images) delete e._images[slot];
+    renderEmpresas();
+    openModal(empresaId);
+    showToast('Imagen eliminada');
+  } catch(err) { showToast('Error al eliminar: ' + err.message, true); }
 }
 function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalBtn(); }
 function closeModalBtn() { document.getElementById('modalOverlay').classList.remove('open'); }
