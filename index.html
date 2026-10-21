@@ -673,6 +673,19 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
             </div>
           </div>
         </div>
+        <div class="form-section" style="background:#F7FAF8">
+          <p class="section-label">5 · Protección de datos</p>
+          <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-weight:400;font-size:13px;color:var(--ink-mid);line-height:1.6">
+            <input type="checkbox" id="f_gdpr" required style="margin-top:3px;flex-shrink:0;accent-color:var(--verde);width:15px;height:15px">
+            <span>
+              He leído y acepto la <a href="/politica-privacidad.html" target="_blank" style="color:var(--verde);font-weight:600">Política de privacidad</a>.
+              Los datos facilitados serán tratados por <strong>Asopiel</strong> (gerencia@asopiel.com) con la finalidad de gestionar el alta en el directorio del sector y la intermediación entre empresas.
+              Base legal: ejecución de relación precontractual e interés legítimo (art. 6.1.b y 6.1.f RGPD).
+              Puede ejercer sus derechos de acceso, rectificación, supresión y demás escribiendo a
+              <a href="mailto:gerencia@asopiel.com" style="color:var(--verde)">gerencia@asopiel.com</a>.
+            </span>
+          </label>
+        </div>
         <div class="form-footer">
           <p class="form-note">Asopiel revisará tu ficha antes de publicarla. Recibirás acceso por email.</p>
           <button class="btn-submit" onclick="submitFormEmpresa()">Enviar solicitud →</button>
@@ -808,9 +821,19 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
           <!-- Sección 7: Protección de datos -->
           <div class="form-section">
             <p class="section-label" id="mLabel2_7">7 · Protección de Datos</p>
-            <label class="check-option">
-              <input type="checkbox" id="f2_gdpr">
-              <span id="lGdpr">La información facilitada será utilizada exclusivamente para la gestión de la visita empresarial y la intermediación con las empresas asociadas a ASOPIEL.</span>
+            <label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-weight:400;font-size:13px;color:var(--ink-mid);line-height:1.6">
+              <input type="checkbox" id="f2_gdpr" required style="margin-top:3px;flex-shrink:0;accent-color:var(--verde);width:15px;height:15px">
+              <span id="lGdpr">
+                He leído y acepto la <a href="/politica-privacidad.html" target="_blank" style="color:var(--verde);font-weight:600">Política de privacidad</a>.
+                Los datos facilitados serán tratados por <strong>Asopiel</strong> — Asociación de Empresarios del Sector de la Piel de Ubrique (gerencia@asopiel.com) —
+                con la finalidad de gestionar el acceso al directorio y la intermediación con los fabricantes del sector.
+                Base legal: consentimiento del interesado y ejecución de relación precontractual (art. 6.1.a y 6.1.b RGPD).
+                Los datos se conservarán mientras el acceso esté vigente y hasta 3 años después de su revocación.
+                No se ceden a terceros salvo obligación legal.
+                Puede ejercer sus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a
+                <a href="mailto:gerencia@asopiel.com" style="color:var(--verde)">gerencia@asopiel.com</a>,
+                y reclamar ante la AEPD en <a href="https://www.aepd.es" target="_blank" style="color:var(--verde)">www.aepd.es</a>.
+              </span>
             </label>
           </div>
 
@@ -1044,6 +1067,14 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- PIE LEGAL GLOBAL (visible siempre en la parte inferior) -->
+<footer style="text-align:center;padding:14px 24px;font-size:11px;color:#888;border-top:1px solid #e8e8e8;background:#fafafa">
+  © 2026 Asopiel · Asociación de Empresarios del Sector de la Piel de Ubrique &nbsp;|&nbsp;
+  <a href="/aviso-legal.html" target="_blank" style="color:#888;text-decoration:none;margin:0 6px">Aviso legal</a>
+  <a href="/politica-privacidad.html" target="_blank" style="color:#888;text-decoration:none;margin:0 6px">Política de privacidad</a>
+  <a href="/politica-cookies.html" target="_blank" style="color:#888;text-decoration:none;margin:0 6px">Política de cookies</a>
+</footer>
 
 <script>
 const API = 'https://mapa-sector-api.asopielubrique.workers.dev';
