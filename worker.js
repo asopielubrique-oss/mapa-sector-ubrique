@@ -86,7 +86,7 @@ async function sendEmail(env, { to, subject, html }) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Mapa del Sector Piel de Ubrique <noreply@asopiel.com>',
+        from: 'Mapa del Sector Piel de Ubrique <oficina@asopiel.com>',
         to: [to],
         subject,
         html,
