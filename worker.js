@@ -794,6 +794,11 @@ async function handleSolicitudMarca(request, env) {
     estado: 'pendiente',
     permisos: [],
     createdAt: new Date().toISOString(),
+    // Evidencia de consentimiento RGPD (art. 7 RGPD)
+    gdpr_consent: true,
+    gdpr_consent_ts: new Date().toISOString(),
+    gdpr_consent_ip: request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown',
+    gdpr_text_version: '1.0',
   };
   await kvPut(env, `marca:${id}`, registro);
   return jsonResponse({ ok: true, id }, 201);
@@ -1039,7 +1044,16 @@ async function handleRegister(request, env) {
 
   const { tipo, ...data } = body;
   const id = crypto.randomUUID().slice(0, 8);
-  const pending = { id, tipo, ...data, status: 'pending', createdAt: new Date().toISOString() };
+  const pending = {
+    id, tipo, ...data,
+    status: 'pending',
+    createdAt: new Date().toISOString(),
+    // Evidencia de consentimiento RGPD (art. 7 RGPD)
+    gdpr_consent: true,
+    gdpr_consent_ts: new Date().toISOString(),
+    gdpr_consent_ip: request.headers.get('CF-Connecting-IP') || request.headers.get('X-Forwarded-For') || 'unknown',
+    gdpr_text_version: '1.0',
+  };
   await kvPut(env, `pending:${id}`, pending);
   return jsonResponse({ ok: true, id }, 201);
 }
