@@ -2022,7 +2022,7 @@ async function confirmarAprobarMarca() {
     const data = await apiFetch(`/marcas/${pendingMarcaId}/aprobar`, { method: 'POST', body: JSON.stringify({ permisos }) });
     loading(false);
     if (data.ok) {
-      const { email, password } = data.data;
+      const { email, password } = data;
       showToast(`✅ Acceso generado. Credenciales: ${email} / ${password}`);
       cargarMarcas(); cargarUsuarios();
     } else { showToast('Error al aprobar.', true); }

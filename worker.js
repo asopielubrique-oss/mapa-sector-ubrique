@@ -309,6 +309,19 @@ const MAX_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB por imagen
 
 export default {
   async fetch(request, env) {
+    try {
+      return await handleRequest(request, env);
+    } catch (e) {
+      console.error('Worker unhandled error:', e);
+      return new Response(JSON.stringify({ ok: false, error: e.message || 'Error interno del servidor' }), {
+        status: 500,
+        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+      });
+    }
+  },
+};
+
+async function handleRequest(request, env) {
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
     }
@@ -423,8 +436,7 @@ export default {
     }
 
     return errorResponse('Ruta no encontrada', 404);
-  },
-};
+}
 
 // ─── Handlers de imágenes ─────────────────────────────────────────────────────
 
