@@ -392,6 +392,10 @@ async function handleRequest(request, env) {
     if (marcaAccion && method === 'POST') {
       return handleAccionMarca(request, env, marcaAccion[1], marcaAccion[2]);
     }
+    const marcaPermisos = path.match(/^\/marcas\/([^/]+)\/permisos$/);
+    if (marcaPermisos && method === 'POST') {
+      return handleEditarPermisosMarca(request, env, marcaPermisos[1]);
+    }
     if (path.startsWith('/marcas/')) {
       return handleMarcasRouter(request, env, path, method);
     }
@@ -878,6 +882,38 @@ async function handleAccionMarca(request, env, marcaId, accion) {
     await kvPut(env, `user:${emailMarca}`, u);
   }
   return jsonResponse({ ok: true });
+}
+
+/** POST /marcas/:id/permisos  { permisos: [...] } → actualiza epígrafes sin revocar acceso. */
+async function handleEditarPermisosMarca(request, env, marcaId) {
+  const user = await authenticate(request, env);
+  const authError = requireRole(user, 'admin');
+  if (authError) return authError;
+
+  const marca = await kvGet(env, `marca:${marcaId}`);
+  if (!marca) return errorResponse('Marca no encontrada', 404);
+  if (marca.estado !== 'aprobada') return errorResponse('La marca no está aprobada', 400);
+
+  const body = await request.json().catch(() => ({}));
+  const permisos = Array.isArray(body.permisos)
+    ? body.permisos.filter(p => CATEGORIAS_MARCA.includes(p))
+    : [];
+  if (!permisos.length) return errorResponse('Asigna al menos una categoría de permiso');
+
+  // Actualizar la marca
+  marca.permisos = permisos;
+  marca.permisosEditadosAt = new Date().toISOString();
+  await kvPut(env, `marca:${marcaId}`, marca);
+
+  // Actualizar también el usuario asociado
+  const emailMarca = marca.email;
+  const u = await kvGet(env, `user:${emailMarca}`);
+  if (u) {
+    u.permisos = permisos;
+    await kvPut(env, `user:${emailMarca}`, u);
+  }
+
+  return jsonResponse({ ok: true, permisos });
 }
 
 /** PUT y DELETE sobre /marcas/:id (solo admin). */

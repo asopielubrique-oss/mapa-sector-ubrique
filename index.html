@@ -1060,6 +1060,35 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   </div>
 </div>
 
+<!-- MODAL EDITAR PERMISOS MARCA -->
+<div class="modal-overlay" id="modalEditarPermisos" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-header">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:var(--ink)">Editar acceso de marca</div>
+        <div id="modalEditarPermisosNombre" style="font-size:12px;color:var(--ink-soft);margin-top:3px">—</div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('modalEditarPermisos').classList.remove('open')">×</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:13px;color:var(--ink-mid);margin-bottom:14px">Marca o desmarca los epígrafes a los que esta marca tiene acceso. No se cambian sus credenciales.</p>
+      <div class="permisos-grid">
+        <label class="permiso-check"><input type="checkbox" id="ep_asoc_fab" value="asociado-fabricante"> Fabricantes (asociados Asopiel)</label>
+        <label class="permiso-check"><input type="checkbox" id="ep_noasoc_fab" value="no-asociado-fabricante"> Fabricantes (no asociados)</label>
+        <label class="permiso-check"><input type="checkbox" id="ep_asoc_taller" value="asociado-taller"> Talleres auxiliares (asociados Asopiel)</label>
+        <label class="permiso-check"><input type="checkbox" id="ep_noasoc_taller" value="no-asociado-taller"> Talleres auxiliares (no asociados)</label>
+        <label class="permiso-check"><input type="checkbox" id="ep_asoc_prov" value="asociado-proveedor"> Proveedores (asociados Asopiel)</label>
+        <label class="permiso-check"><input type="checkbox" id="ep_noasoc_prov" value="no-asociado-proveedor"> Proveedores (no asociados)</label>
+        <label class="permiso-check"><input type="checkbox" id="ep_serv" value="servicios"> Servicios a empresas</label>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:18px;justify-content:flex-end">
+        <button class="btn-admin" onclick="document.getElementById('modalEditarPermisos').classList.remove('open')">Cancelar</button>
+        <button class="btn-admin success" onclick="confirmarEditarPermisos()">Guardar cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL REVOCAR -->
 <div class="modal-overlay" id="modalRevocar" onclick="closeModalRevocar(event)">
   <div class="modal" style="max-width:480px">
@@ -1934,6 +1963,7 @@ async function cargarMarcas() {
         <td><div class="admin-actions">
           ${s.ficha ? `<button class="btn-admin" onclick="abrirFichaMarca('${s.id}', this)" style="background:var(--verde-pale);color:var(--verde)">Ver ficha</button>` : ''}
           ${s.estado === 'pendiente' ? `<button class="btn-admin success" onclick="abrirAprobarMarca('${s.id}','${s.marca}')">Aprobar acceso</button>` : ''}
+          ${s.estado === 'aprobada' ? `<button class="btn-admin" onclick="abrirEditarPermisos('${s.id}','${s.marca}')">Editar acceso</button>` : ''}
           ${s.estado === 'aprobada' ? `<button class="btn-admin danger" onclick="abrirRevocar('${s.id}','${s.marca}','${s.email}')">Revocar</button>` : ''}
         </div></td>
       </tr>`).join('');
@@ -2025,6 +2055,39 @@ function abrirFichaMarca(id, btnEl) {
     ${f.observaciones ? `<div class="ficha-section"><div class="ficha-section-title">6 · Observaciones</div><p style="font-size:13px;color:var(--ink);margin:0">${f.observaciones}</p></div>` : ''}
   `;
   document.getElementById('modalFichaMarca').classList.add('open');
+}
+
+let pendingEditarPermisosId = null;
+const EP_IDS = ['ep_asoc_fab','ep_noasoc_fab','ep_asoc_taller','ep_noasoc_taller','ep_asoc_prov','ep_noasoc_prov','ep_serv'];
+
+function abrirEditarPermisos(id, nombre) {
+  pendingEditarPermisosId = id;
+  document.getElementById('modalEditarPermisosNombre').textContent = nombre;
+  // Pre-marcar los epígrafes actuales
+  const s = _marcasCache.find(m => m.id === id);
+  const actuales = (s && s.permisos) || [];
+  EP_IDS.forEach(eid => {
+    const el = document.getElementById(eid);
+    el.checked = actuales.includes(el.value);
+  });
+  document.getElementById('modalEditarPermisos').classList.add('open');
+}
+
+async function confirmarEditarPermisos() {
+  const permisos = EP_IDS
+    .filter(eid => document.getElementById(eid).checked)
+    .map(eid => document.getElementById(eid).value);
+  if (!permisos.length) { showToast('⚠️ Selecciona al menos una categoría.', true); return; }
+  document.getElementById('modalEditarPermisos').classList.remove('open');
+  loading(true, 'Actualizando acceso…');
+  try {
+    const data = await apiFetch(`/marcas/${pendingEditarPermisosId}/permisos`, { method: 'POST', body: JSON.stringify({ permisos }) });
+    loading(false);
+    if (data.ok) {
+      showToast('✅ Epígrafes actualizados correctamente.');
+      cargarMarcas(); cargarUsuarios();
+    } else { showToast(data.error || 'Error al actualizar.', true); }
+  } catch(e) { loading(false); showToast('Error de conexión.', true); }
 }
 
 function abrirAprobarMarca(id, nombre) {
