@@ -74,6 +74,29 @@ async function listByPrefix(env, prefix, { skipImages = false } = {}) {
   return out;
 }
 
+/** Envía un email transaccional mediante la API de Resend. */
+async function sendEmail(env, { to, subject, html }) {
+  const apiKey = env.RESEND_API_KEY;
+  if (!apiKey) return; // Si no hay clave configurada, no falla
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: 'Mapa del Sector Piel de Ubrique <noreply@asopiel.com>',
+        to: [to],
+        subject,
+        html,
+      }),
+    });
+  } catch (e) {
+    console.error('Error enviando email:', e);
+  }
+}
+
 function generatePassword() {
   const chars = 'abcdefghjkmnpqrstuvwxyz23456789';
   const bytes = crypto.getRandomValues(new Uint8Array(12));
@@ -871,6 +894,26 @@ async function handleAccionMarca(request, env, marcaId, accion) {
     marca.aprobadaAt = new Date().toISOString();
     await kvPut(env, `marca:${marcaId}`, marca);
 
+    // Enviar credenciales por email
+    await sendEmail(env, {
+      to: emailMarca,
+      subject: 'Acceso concedido al Mapa del Sector Piel de Ubrique',
+      html: `
+        <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:24px">
+          <h2 style="color:#1a472a">✅ Su marca ha sido aprobada</h2>
+          <p>Estimado/a <strong>${marca.contacto || marca.marca}</strong>,</p>
+          <p>Su solicitud de acceso al <strong>Mapa del Sector Piel de Ubrique</strong> ha sido aprobada. A continuación sus credenciales de acceso:</p>
+          <div style="background:#f4f4f4;border-radius:8px;padding:16px;margin:16px 0">
+            <p style="margin:4px 0"><strong>URL:</strong> <a href="https://clusterubrique.asopiel.com">clusterubrique.asopiel.com</a></p>
+            <p style="margin:4px 0"><strong>Usuario:</strong> ${emailMarca}</p>
+            <p style="margin:4px 0"><strong>Contraseña:</strong> <code style="background:#e0e0e0;padding:2px 6px;border-radius:4px">${password}</code></p>
+          </div>
+          <p>Le recomendamos cambiar su contraseña tras el primer acceso.</p>
+          <p style="color:#666;font-size:13px">Asopiel · Asociación de Empresarios del Sector de la Piel de Ubrique<br>gerencia@asopiel.com</p>
+        </div>
+      `,
+    });
+
     return jsonResponse({ ok: true, email: emailMarca, password });
   }
 
@@ -1008,6 +1051,27 @@ async function handleCambiarClaveUsuario(request, env, email) {
   u.password = password;
   u.claveActualizadaAt = new Date().toISOString();
   await kvPut(env, `user:${email}`, u);
+
+  // Enviar nueva contraseña por email
+  await sendEmail(env, {
+    to: email,
+    subject: 'Nueva contraseña — Mapa del Sector Piel de Ubrique',
+    html: `
+      <div style="font-family:sans-serif;max-width:520px;margin:0 auto;padding:24px">
+        <h2 style="color:#1a472a">🔑 Nueva contraseña de acceso</h2>
+        <p>Estimado/a <strong>${u.nombre || u.entidad || email}</strong>,</p>
+        <p>El administrador ha generado una nueva contraseña para su acceso al <strong>Mapa del Sector Piel de Ubrique</strong>:</p>
+        <div style="background:#f4f4f4;border-radius:8px;padding:16px;margin:16px 0">
+          <p style="margin:4px 0"><strong>URL:</strong> <a href="https://clusterubrique.asopiel.com">clusterubrique.asopiel.com</a></p>
+          <p style="margin:4px 0"><strong>Usuario:</strong> ${email}</p>
+          <p style="margin:4px 0"><strong>Contraseña:</strong> <code style="background:#e0e0e0;padding:2px 6px;border-radius:4px">${password}</code></p>
+        </div>
+        <p>Le recomendamos cambiar su contraseña tras iniciar sesión.</p>
+        <p style="color:#666;font-size:13px">Asopiel · Asociación de Empresarios del Sector de la Piel de Ubrique<br>gerencia@asopiel.com</p>
+      </div>
+    `,
+  });
+
   return jsonResponse({ ok: true, email, password });
 }
 
