@@ -1,0 +1,6 @@
+.git/
+.git/**
+.wrangler/
+.wrangler/**
+wrangler.toml
+worker.js

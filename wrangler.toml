@@ -1,0 +1,8 @@
+name = "mapa-sector-ubrique"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+account_id = "3f3498530234342f9c9a5b1f1774fdb2"
+
+[assets]
+directory = "."
+binding = "ASSETS"
