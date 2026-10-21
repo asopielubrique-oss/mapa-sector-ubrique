@@ -408,6 +408,10 @@ async function handleRequest(request, env) {
     if (usuarioRevocar && method === 'POST') {
       return handleRevocarUsuario(request, env, decodeURIComponent(usuarioRevocar[1]));
     }
+    const usuarioClave = path.match(/^\/usuarios\/([^/]+)\/cambiar-clave$/);
+    if (usuarioClave && method === 'POST') {
+      return handleCambiarClaveUsuario(request, env, decodeURIComponent(usuarioClave[1]));
+    }
 
     // ── Talleres especializados ───────────────────────────────────────────────
     if (path === '/talleres' && method === 'GET') {
@@ -988,6 +992,23 @@ async function handleRevocarUsuario(request, env, email) {
   u.revocadoAt = new Date().toISOString();
   await kvPut(env, `user:${email}`, u);
   return jsonResponse({ ok: true });
+}
+
+/** POST /usuarios/:email/cambiar-clave  → genera nueva contraseña y la devuelve. */
+async function handleCambiarClaveUsuario(request, env, email) {
+  const user = await authenticate(request, env);
+  const authError = requireRole(user, 'admin');
+  if (authError) return authError;
+
+  const u = await kvGet(env, `user:${email}`);
+  if (!u) return errorResponse('Usuario no encontrado', 404);
+  if (u.role === 'admin') return errorResponse('No se puede cambiar la clave de un administrador', 403);
+
+  const password = generatePassword();
+  u.password = password;
+  u.claveActualizadaAt = new Date().toISOString();
+  await kvPut(env, `user:${email}`, u);
+  return jsonResponse({ ok: true, email, password });
 }
 
 // ─── Talleres especializados ──────────────────────────────────────────────────

@@ -2202,10 +2202,25 @@ async function cargarUsuarios() {
         <td style="font-size:11px;color:var(--ink-mid)">${u.rol === 'marca' && u.permisos ? u.permisos.map(p => cats[p] || p).join(', ') : '—'}</td>
         <td><span class="badge badge-${u.estado === 'activo' ? 'activo' : 'revocado'}">${u.estado}</span></td>
         <td><div class="admin-actions">
+          ${u.estado === 'activo' && u.rol !== 'admin' ? `<button class="btn-admin" onclick="cambiarClaveUsuario('${u.email}','${u.entidad || u.email}')">Cambiar clave</button>` : ''}
           ${u.estado === 'activo' && u.rol !== 'admin' ? `<button class="btn-admin danger" onclick="abrirRevocarUsuario('${u.id}','${u.entidad || u.email}','${u.email}')">Revocar</button>` : ''}
         </div></td>
       </tr>`).join('');
   } catch(e) { console.error(e); }
+}
+
+async function cambiarClaveUsuario(email, nombre) {
+  if (!confirm(`¿Generar una nueva contraseña para ${nombre}?\n\nSe invalidará la clave actual.`)) return;
+  loading(true, 'Generando nueva contraseña…');
+  try {
+    const data = await apiFetch(`/usuarios/${encodeURIComponent(email)}/cambiar-clave`, { method: 'POST' });
+    loading(false);
+    if (data.ok) {
+      showToast(`🔑 Nueva clave de ${data.email}: ${data.password}`, false);
+      // Mostrar también en un alert para que pueda copiarlo con calma
+      alert(`Nueva contraseña generada para ${data.email}:\n\n${data.password}\n\nCópiala ahora, no se volverá a mostrar.`);
+    } else { showToast(data.error || 'Error al cambiar la clave.', true); }
+  } catch(e) { loading(false); showToast('Error de conexión.', true); }
 }
 
 function abrirRevocarUsuario(id, nombre, email) {
