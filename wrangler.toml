@@ -6,3 +6,11 @@ account_id = "3f3498530234342f9c9a5b1f1774fdb2"
 [assets]
 directory = "."
 binding = "ASSETS"
+
+[[kv_namespaces]]
+binding = "MAPA_SECTOR_KV"
+id = "e1396c127b3f4597bb50c0e4456891ce"
+
+[[r2_buckets]]
+binding = "MEDIA_BUCKET"
+bucket_name = "mapa-sector-media"
