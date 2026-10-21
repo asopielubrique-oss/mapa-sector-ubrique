@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Mapa del Sector · Piel de Ubrique</title>
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTLSeB68ARYJipY1SQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
 :root {
   --bg: #F7FAF8; --bg-alt: #EBF2EE; --ink: #1A3D2E; --ink-mid: #3D6B54; --ink-soft: #7AA88F;
@@ -13,6 +14,41 @@
   --shadow: 0 2px 12px rgba(27,61,46,0.08); --shadow-lg: 0 8px 32px rgba(27,61,46,0.14);
   --radius: 4px; --radius-lg: 8px; --font: 'Montserrat', sans-serif;
 }
+
+/* MAPA */
+.mapa-layout { display: flex; flex-direction: column; height: calc(100vh - 68px); }
+.mapa-toolbar { background: white; border-bottom: 1px solid var(--border); padding: 10px 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; flex-shrink: 0; }
+.mapa-toolbar-title { font-size: 11px; font-weight: 700; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; margin-right: 4px; }
+.mapa-filter-select { border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 10px; font-family: var(--font); font-size: 12px; color: var(--ink); background: var(--bg); outline: none; cursor: pointer; }
+.mapa-filter-select:focus { border-color: var(--verde); }
+.mapa-btn-reset { padding: 6px 12px; border-radius: var(--radius); border: 1px solid var(--border); background: white; color: var(--ink-mid); font-family: var(--font); font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s; }
+.mapa-btn-reset:hover { border-color: var(--verde); color: var(--verde); }
+.mapa-count { margin-left: auto; font-size: 11px; color: var(--ink-soft); font-weight: 600; }
+#mapaContainer { flex: 1; position: relative; }
+#mapaLeaflet { width: 100%; height: 100%; }
+.mapa-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: var(--bg); z-index: 10; }
+.mapa-empty-icon { font-size: 48px; }
+.mapa-empty p { font-size: 14px; color: var(--ink-soft); text-align: center; max-width: 300px; line-height: 1.6; }
+.mapa-loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(247,250,248,0.85); z-index: 500; flex-direction: column; gap: 10px; }
+.mapa-loading-spin { width: 32px; height: 32px; border: 3px solid var(--verde-pale); border-top-color: var(--verde); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.mapa-loading p { font-size: 12px; color: var(--ink-mid); font-weight: 500; }
+/* Popup Leaflet personalizado */
+.leaflet-popup-content-wrapper { border-radius: var(--radius-lg) !important; box-shadow: var(--shadow-lg) !important; border: 1px solid var(--border); padding: 0 !important; overflow: hidden; }
+.leaflet-popup-content { margin: 0 !important; width: 240px !important; }
+.leaflet-popup-tip { background: white !important; }
+.mapa-popup { padding: 14px 16px; }
+.mapa-popup-nombre { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.mapa-popup-cat { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 2px 7px; border-radius: 2px; margin-bottom: 8px; }
+.mapa-popup-acts { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.mapa-popup-act { font-size: 10px; background: var(--bg-alt); color: var(--ink-mid); padding: 2px 6px; border-radius: 2px; }
+.mapa-popup-btn { display: block; width: 100%; padding: 7px; background: var(--ink); color: white; border: none; border-radius: var(--radius); font-family: var(--font); font-size: 11px; font-weight: 700; text-align: center; cursor: pointer; letter-spacing: 0.04em; transition: background 0.15s; }
+.mapa-popup-btn:hover { background: var(--verde); }
+/* Leyenda mapa */
+.mapa-legend { position: absolute; bottom: 24px; right: 10px; z-index: 400; background: white; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 10px 14px; box-shadow: var(--shadow); min-width: 160px; }
+.mapa-legend-title { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+.mapa-legend-item { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; font-size: 11px; color: var(--ink-mid); }
+.mapa-legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; border: 2px solid rgba(0,0,0,0.15); }
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: var(--font); background: var(--bg); color: var(--ink); min-height: 100vh; font-size: 15px; line-height: 1.6; }
 
@@ -461,6 +497,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
       <nav class="header-nav-wrapper">
         <div class="header-nav" id="headerNav">
           <button class="nav-btn active" id="navDirectorio" onclick="showView('directorio', this)">Directorio</button>
+          <button class="nav-btn" id="navMapa" onclick="showView('mapa', this)" style="display:none">Mapa</button>
           <button class="nav-btn" id="navTalleres" onclick="showView('talleres', this)" style="display:none">Talleres especializados</button>
           <button class="nav-btn" id="navRegistro" onclick="showView('registro', this)" style="display:none">Registrar empresa</button>
           <button class="nav-btn" id="navAdmin" onclick="showView('admin', this)" style="display:none">Administración</button>
@@ -800,6 +837,45 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
     </div>
   </div>
 
+  <!-- MAPA -->
+  <div id="viewMapa" class="view">
+    <div class="mapa-layout">
+      <div class="mapa-toolbar">
+        <span class="mapa-toolbar-title">Filtrar</span>
+        <select class="mapa-filter-select" id="mapaFiltroCategoria" onchange="renderMapa()">
+          <option value="">Todas las categorías</option>
+          <option value="fabricante">Fabricantes</option>
+          <option value="taller">Talleres auxiliares</option>
+          <option value="proveedor">Proveedores</option>
+          <option value="servicios">Servicios</option>
+        </select>
+        <select class="mapa-filter-select" id="mapaFiltroActividad" onchange="renderMapa()">
+          <option value="">Todas las actividades</option>
+        </select>
+        <button class="mapa-btn-reset" onclick="resetMapaFiltros()">Limpiar filtros</button>
+        <span class="mapa-count" id="mapaCount"></span>
+      </div>
+      <div id="mapaContainer">
+        <div id="mapaLeaflet"></div>
+        <div class="mapa-empty" id="mapaEmpty" style="display:none">
+          <div class="mapa-empty-icon">📍</div>
+          <p>No hay empresas con ubicación registrada que coincidan con los filtros.</p>
+        </div>
+        <div class="mapa-loading" id="mapaLoadingOverlay">
+          <div class="mapa-loading-spin"></div>
+          <p>Cargando mapa…</p>
+        </div>
+        <div class="mapa-legend" id="mapaLegend" style="display:none">
+          <div class="mapa-legend-title">Leyenda</div>
+          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#2B6B4A"></div> Fabricante</div>
+          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#7B4F2E"></div> Taller auxiliar</div>
+          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#1A5A8A"></div> Proveedor</div>
+          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#6B4D9B"></div> Servicios</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ADMIN -->
   <div id="viewAdmin" class="view">
     <div class="admin-layout">
@@ -1051,6 +1127,8 @@ function iniciarSesion(data) {
   // Mostrar nav según rol
   document.getElementById('navAdmin').style.display = currentUser.role === 'admin' ? '' : 'none';
   document.getElementById('navRegistro').style.display = currentUser.role === 'admin' ? '' : 'none';
+  // Mapa: visible para admin y marcas
+  document.getElementById('navMapa').style.display = (currentUser.role === 'admin' || currentUser.role === 'marca') ? '' : 'none';
   // Talleres: visible para fabricantes (asociado o no) y admin
   const esFabricante = currentUser.role === 'empresa' && currentUser.tipo === 'fabricante';
   document.getElementById('navTalleres').style.display = (esFabricante || currentUser.role === 'admin') ? '' : 'none';
@@ -1139,6 +1217,10 @@ function showView(viewId, btn) {
   // Cargar talleres al entrar en esa vista
   if (viewId === 'talleres' && currentUser) {
     cargarVistaTalleres();
+  }
+  // Inicializar mapa al entrar en esa vista
+  if (viewId === 'mapa' && currentUser) {
+    inicializarMapa();
   }
 }
 
@@ -2117,6 +2199,158 @@ async function revocarAccesoTaller(id) {
     if (data.ok) { showToast('Acceso revocado.'); cargarTalleresSolicitudes(); }
     else showToast('Error al revocar.', true);
   } catch(e) { loading(false); showToast('Error de conexión.', true); }
+}
+
+// ── MAPA ──────────────────────────────────────────────────────────────────────
+let mapaInstance = null;
+let mapaMarkers = [];
+let mapaData = [];   // empresas con lat/lng
+let mapaInicializado = false;
+
+const MAPA_COLORS = {
+  'fabricante':            '#2B6B4A',
+  'asociado-fabricante':   '#2B6B4A',
+  'no-asociado-fabricante':'#2B6B4A',
+  'taller':                '#7B4F2E',
+  'asociado-taller':       '#7B4F2E',
+  'no-asociado-taller':    '#7B4F2E',
+  'proveedor':             '#1A5A8A',
+  'asociado-proveedor':    '#1A5A8A',
+  'no-asociado-proveedor': '#1A5A8A',
+  'servicios':             '#6B4D9B',
+};
+
+function mapaColor(cat) {
+  return MAPA_COLORS[cat] || MAPA_COLORS[baseCat(cat)] || '#2B6B4A';
+}
+
+function crearIconoMapa(cat) {
+  const color = mapaColor(cat);
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="36" viewBox="0 0 28 36">
+    <path d="M14 0C6.268 0 0 6.268 0 14c0 9.333 14 22 14 22S28 23.333 28 14C28 6.268 21.732 0 14 0z" fill="${color}" stroke="white" stroke-width="1.5"/>
+    <circle cx="14" cy="14" r="5" fill="white" fill-opacity="0.9"/>
+  </svg>`;
+  return L.divIcon({
+    html: svg,
+    className: '',
+    iconSize: [28, 36],
+    iconAnchor: [14, 36],
+    popupAnchor: [0, -36],
+  });
+}
+
+async function inicializarMapa() {
+  if (mapaInicializado) { renderMapa(); return; }
+
+  // Cargar Leaflet JS si no está disponible
+  if (typeof L === 'undefined') {
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';
+      s.integrity = 'sha512-BwHfrr4c9kmRkLw6iXFdzcdWV/PGkVgiIyIWLLlTSXzWQzxuSg4DiQUCpauz/EWjgk5TYQqX/kvn9pG1NpYfqg==';
+      s.crossOrigin = 'anonymous';
+      s.referrerPolicy = 'no-referrer';
+      s.onload = resolve; s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  document.getElementById('mapaLoadingOverlay').style.display = 'flex';
+
+  // Cargar datos
+  try {
+    const data = await apiFetch('/mapa');
+    const empresas = Array.isArray(data) ? data : (data.data || []);
+    mapaData = empresas.filter(e => e.lat && e.lng);
+
+    // Poblar filtro de actividades del mapa
+    const todasActs = new Set();
+    mapaData.forEach(e => (e.actividades || []).forEach(a => todasActs.add(a)));
+    const selAct = document.getElementById('mapaFiltroActividad');
+    selAct.innerHTML = '<option value="">Todas las actividades</option>';
+    [...todasActs].sort().forEach(a => {
+      const o = document.createElement('option'); o.value = a; o.textContent = a; selAct.appendChild(o);
+    });
+  } catch(e) {
+    document.getElementById('mapaLoadingOverlay').style.display = 'none';
+    showToast('Error al cargar los datos del mapa.', true);
+    return;
+  }
+
+  // Inicializar mapa centrado en Ubrique
+  mapaInstance = L.map('mapaLeaflet', {
+    center: [36.6836, -5.4510],
+    zoom: 14,
+    zoomControl: true,
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 19,
+  }).addTo(mapaInstance);
+
+  mapaInicializado = true;
+  document.getElementById('mapaLoadingOverlay').style.display = 'none';
+  document.getElementById('mapaLegend').style.display = '';
+
+  renderMapa();
+}
+
+function renderMapa() {
+  if (!mapaInicializado || !mapaInstance) return;
+
+  const filtroCat = document.getElementById('mapaFiltroCategoria').value;
+  const filtroAct = document.getElementById('mapaFiltroActividad').value;
+
+  // Limpiar marcadores anteriores
+  mapaMarkers.forEach(m => m.remove());
+  mapaMarkers = [];
+
+  const filtradas = mapaData.filter(e => {
+    if (filtroCat && baseCat(e.categoria) !== filtroCat) return false;
+    if (filtroAct && !(e.actividades || []).includes(filtroAct)) return false;
+    return true;
+  });
+
+  document.getElementById('mapaCount').textContent =
+    filtradas.length === mapaData.length
+      ? `${mapaData.length} empresa${mapaData.length !== 1 ? 's' : ''} en el mapa`
+      : `${filtradas.length} de ${mapaData.length} empresa${mapaData.length !== 1 ? 's' : ''}`;
+
+  if (!filtradas.length) {
+    document.getElementById('mapaEmpty').style.display = 'flex';
+    return;
+  }
+  document.getElementById('mapaEmpty').style.display = 'none';
+
+  filtradas.forEach(e => {
+    const color = mapaColor(e.categoria);
+    const acts = (e.actividades || []).slice(0, 4)
+      .map(a => `<span class="mapa-popup-act">${a}</span>`).join('');
+    const popupHtml = `
+      <div class="mapa-popup">
+        <div class="mapa-popup-nombre">${e.razon}</div>
+        <span class="mapa-popup-cat ${CAT_BADGE[e.categoria] || 'badge-serv'}">${CAT_LABEL[e.categoria] || e.categoria}</span>
+        ${acts ? `<div class="mapa-popup-acts">${acts}</div>` : ''}
+        <button class="mapa-popup-btn" onclick="openModal('${e.id}')">Ver ficha completa</button>
+      </div>`;
+    const marker = L.marker([e.lat, e.lng], { icon: crearIconoMapa(e.categoria) })
+      .addTo(mapaInstance)
+      .bindPopup(popupHtml, { maxWidth: 260 });
+    mapaMarkers.push(marker);
+  });
+
+  // Ajustar vista si hay marcadores
+  if (mapaMarkers.length > 0) {
+    const group = L.featureGroup(mapaMarkers);
+    mapaInstance.fitBounds(group.getBounds().pad(0.15));
+  }
+}
+
+function resetMapaFiltros() {
+  document.getElementById('mapaFiltroCategoria').value = '';
+  document.getElementById('mapaFiltroActividad').value = '';
+  renderMapa();
 }
 </script>
 </body>
