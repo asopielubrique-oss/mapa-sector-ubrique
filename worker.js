@@ -1067,6 +1067,36 @@ async function handleAdminPending(request, env) {
   return jsonResponse(pending);
 }
 
+// ─── Telegram ────────────────────────────────────────────────────────────────
+
+const TELEGRAM_BOT_TOKEN = '8981585313:AAE0lx_u6vZS6iYU2ernmUVu_OSSygYakqM';
+const TELEGRAM_CHANNEL_ID = '-1003844028472';
+const TELEGRAM_INVITE_LINK = 'https://t.me/+mJ2jSrZ9-wQyMzQ8';
+
+/** Envía un mensaje de texto al canal de Asopiel vía bot */
+async function sendTelegramMessage(text) {
+  try {
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHANNEL_ID,
+        text,
+        parse_mode: 'HTML',
+      }),
+    });
+  } catch (e) {
+    // No bloquear el flujo si Telegram falla
+    console.error('Telegram error:', e);
+  }
+}
+
+/** Envía el enlace de invitación al email de la empresa recién aprobada */
+async function notificarEmpresaAprobada(razon, email) {
+  const texto = `✅ <b>${razon}</b> ha sido aprobada en el Mapa del Sector Piel de Ubrique.\n\nUnirse al canal de Asopiel: ${TELEGRAM_INVITE_LINK}`;
+  await sendTelegramMessage(texto);
+}
+
 async function handleAdminApprove(request, env, pendingId) {
   const user = await authenticate(request, env);
   const authError = requireRole(user, 'admin');
@@ -1117,5 +1147,12 @@ async function handleAdminApprove(request, env, pendingId) {
   }
 
   await env.MAPA_SECTOR_KV.delete(`pending:${pendingId}`);
+
+  // Notificar por Telegram si es una empresa
+  if (pending.tipo === 'empresa') {
+    const razon = pending.razon || pending.nombre || email;
+    await notificarEmpresaAprobada(razon, email);
+  }
+
   return jsonResponse({ ok: true, email, password });
 }
