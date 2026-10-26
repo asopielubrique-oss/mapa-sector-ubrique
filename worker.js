@@ -1202,14 +1202,18 @@ async function handleAdminPending(request, env) {
 
 // ─── Telegram ────────────────────────────────────────────────────────────────
 
-const TELEGRAM_BOT_TOKEN = '8981585313:AAE0lx_u6vZS6iYU2ernmUVu_OSSygYakqM';
 const TELEGRAM_CHANNEL_ID = '-1003844028472';
 const TELEGRAM_INVITE_LINK = 'https://t.me/+mJ2jSrZ9-wQyMzQ8';
 
 /** Envía un mensaje de texto al canal de Asopiel vía bot */
-async function sendTelegramMessage(text) {
+async function sendTelegramMessage(text, env) {
+  const token = env.TELEGRAM_BOT_TOKEN;
+  if (!token) {
+    console.warn('Telegram: TELEGRAM_BOT_TOKEN no configurado en variables de entorno');
+    return;
+  }
   try {
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1225,9 +1229,9 @@ async function sendTelegramMessage(text) {
 }
 
 /** Envía el enlace de invitación al email de la empresa recién aprobada */
-async function notificarEmpresaAprobada(razon, email) {
+async function notificarEmpresaAprobada(razon, email, env) {
   const texto = `✅ <b>${razon}</b> ha sido aprobada en el Mapa del Sector Piel de Ubrique.\n\nUnirse al canal de Asopiel: ${TELEGRAM_INVITE_LINK}`;
-  await sendTelegramMessage(texto);
+  await sendTelegramMessage(texto, env);
 }
 
 async function handleAdminApprove(request, env, pendingId) {
@@ -1284,7 +1288,7 @@ async function handleAdminApprove(request, env, pendingId) {
   // Notificar por Telegram si es una empresa
   if (pending.tipo === 'empresa') {
     const razon = pending.razon || pending.nombre || email;
-    await notificarEmpresaAprobada(razon, email);
+    await notificarEmpresaAprobada(razon, email, env);
   }
 
   return jsonResponse({ ok: true, email, password });
