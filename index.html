@@ -322,7 +322,70 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(22px, 3.5vw, 38px); font-weight: 700; color: white; line-height: 1.2; max-width: 560px; margin: 0 auto 14px; }
 .hero-desc { font-size: 14px; color: rgba(255,255,255,0.5); max-width: 500px; margin: 0 auto; font-weight: 300; line-height: 1.8; }
 
-/* LANDING */
+/* LANDING NUEVA — split 50/50 */
+.landing-nueva { min-height: 100dvh; display: grid; grid-template-columns: 1fr 1fr; }
+.lhero { background: var(--ink); padding: 56px 52px 48px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; min-height: 100dvh; }
+.lhero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 15% 85%, rgba(43,107,74,0.35) 0%, transparent 58%), radial-gradient(ellipse at 85% 10%, rgba(61,138,96,0.15) 0%, transparent 52%); pointer-events: none; }
+.lhero-inner { position: relative; z-index: 2; display: flex; flex-direction: column; height: 100%; justify-content: space-between; gap: 28px; }
+.lhero-head { display: flex; flex-direction: column; gap: 20px; }
+.lhero-brand { display: inline-flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: rgba(93,214,138,.75); }
+.lhero-brand-dot { width: 6px; height: 6px; border-radius: 50%; background: #5CD68A; flex-shrink: 0; }
+.lhero-media { width: 100%; aspect-ratio: 16/9; border-radius: var(--radius-lg); overflow: hidden; position: relative; border: 1px solid rgba(93,214,138,.18); }
+.lhero-media img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; }
+.lhero-copy { display: flex; flex-direction: column; gap: 14px; }
+.lhero-title { font-family: 'Playfair Display', serif; font-size: clamp(20px,2.8vw,36px); font-weight: 700; color: white; line-height: 1.13; text-wrap: balance; }
+.lhero-title em { font-style: italic; color: #5CD68A; }
+.lhero-body { font-size: 13px; font-weight: 300; color: rgba(255,255,255,.58); line-height: 1.75; max-width: 400px; }
+.lhero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: rgba(255,255,255,.08); border-radius: var(--radius-lg); overflow: hidden; border: 1px solid rgba(255,255,255,.08); }
+.lhero-stat { background: rgba(255,255,255,.04); padding: 14px 16px; display: flex; flex-direction: column; gap: 3px; }
+.lhero-stat-value { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: white; line-height: 1; letter-spacing: -.01em; }
+.lhero-stat-value .accent { color: #5CD68A; }
+.lhero-stat-label { font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.42); }
+.lhero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 30px; padding: 7px 15px; font-size: 10px; font-weight: 600; color: rgba(255,255,255,.65); width: fit-content; }
+.lhero-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #5CD68A; flex-shrink: 0; }
+/* Panel derecho */
+.lpanel { background: var(--blanco); padding: 56px 52px 48px; display: flex; flex-direction: column; justify-content: center; min-height: 100dvh; }
+.lpanel-logo { display: flex; align-items: center; gap: 10px; font-size: 11px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: var(--verde); margin-bottom: 40px; }
+.lpanel-logo-mark { width: 28px; height: 28px; border-radius: 6px; background: var(--verde); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.lpanel-title { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--ink); line-height: 1.2; margin-bottom: 6px; }
+.lpanel-sub { font-size: 13px; color: var(--ink-soft); margin-bottom: 28px; line-height: 1.6; }
+.lcta-group { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px; }
+.lcta-btn { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 14px 16px; border-radius: var(--radius-lg); font-size: 12px; font-weight: 700; line-height: 1.3; transition: all .15s; cursor: pointer; border: none; text-align: left; font-family: var(--font); }
+.lcta-btn small { font-size: 10px; font-weight: 400; opacity: .75; display: block; }
+.lcta-solid { background: var(--verde); color: white; }
+.lcta-solid:hover { background: var(--ink); }
+.lcta-outline { background: transparent; border: 1.5px solid var(--verde); color: var(--verde); }
+.lcta-outline:hover { background: rgba(43,107,74,.06); }
+.ldivider { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+.ldivider-line { flex: 1; height: 1px; background: var(--border); }
+.ldivider-text { font-size: 11px; color: var(--ink-soft); white-space: nowrap; font-weight: 600; }
+.lform-group { margin-bottom: 12px; }
+.lform-label { display: block; font-size: 11px; font-weight: 700; color: var(--ink); margin-bottom: 5px; letter-spacing: .03em; }
+.lform-input { width: 100%; padding: 10px 14px; border: 1.5px solid var(--border); border-radius: var(--radius-lg); font-family: var(--font); font-size: 13px; color: var(--ink); background: var(--bg); transition: border-color .15s; outline: none; }
+.lform-input:focus { border-color: var(--verde); background: white; }
+.lform-input::placeholder { color: #9AB8AA; }
+.lbtn-submit { width: 100%; padding: 12px 16px; background: var(--verde); color: white; border: none; border-radius: var(--radius-lg); font-family: var(--font); font-size: 13px; font-weight: 700; letter-spacing: .04em; margin-top: 4px; transition: background .15s; cursor: pointer; }
+.lbtn-submit:hover { background: var(--ink); }
+.lform-link { display: block; text-align: center; font-size: 11px; color: var(--ink-soft); margin-top: 10px; cursor: pointer; }
+.lform-link:hover { color: var(--verde); }
+.lpanel-badge { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border); font-size: 10px; color: var(--ink-soft); font-weight: 600; }
+.lpanel-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #5CD68A; }
+.lform-error { background: #FDECEA; color: #7B2D2D; padding: 8px 12px; border-radius: var(--radius); font-size: 12px; margin-bottom: 10px; display: none; }
+/* Selector idioma sobre la landing nueva */
+.lang-switcher { position: fixed; top: 16px; right: 16px; z-index: 100; display: flex; gap: 4px; background: rgba(255,255,255,.1); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.15); border-radius: 20px; padding: 4px; }
+.lang-btn { background: transparent; border: none; font-family: var(--font); font-size: 10px; font-weight: 700; color: rgba(255,255,255,.6); padding: 4px 8px; border-radius: 14px; cursor: pointer; transition: all .15s; letter-spacing: .06em; }
+.lang-btn:hover { color: white; background: rgba(255,255,255,.12); }
+.lang-btn.active { background: #5CD68A; color: var(--ink); }
+@media (max-width: 800px) {
+  .landing-nueva { grid-template-columns: 1fr; }
+  .lhero { min-height: auto; padding: 44px 24px 40px; padding-top: max(44px, env(safe-area-inset-top, 44px)); }
+  .lpanel { min-height: auto; padding: 36px 24px 48px; padding-bottom: max(48px, env(safe-area-inset-bottom, 48px)); }
+  .lhero-title { font-size: clamp(22px, 6vw, 32px); }
+  .lcta-group { grid-template-columns: 1fr; }
+  .lpanel-logo { margin-bottom: 28px; }
+  .lpanel-title { font-size: 20px; }
+}
+/* LANDING ANTIGUA (compat) */
 .landing-wrapper { min-height: 100vh; display: flex; flex-direction: column; background: var(--ink); }
 .landing-hero { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 32px 60px; text-align: center; position: relative; overflow: hidden; }
 .landing-hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 60% 40%, rgba(43,107,74,0.25) 0%, transparent 65%), radial-gradient(ellipse at 20% 80%, rgba(61,138,96,0.12) 0%, transparent 55%); pointer-events: none; }
@@ -420,24 +483,125 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
 <!-- LANDING PAGE -->
 <div id="landingScreen">
-  <div class="landing-wrapper">
-    <div class="landing-hero">
-      <div class="landing-eyebrow">Piel de Ubrique · Asopiel</div>
-      <h1 class="landing-title">El mayor ecosistema industrial de<br><em>marroquinería de Europa</em></h1>
-      <div class="landing-body">
-        <p>Un término municipal donde confluyen empresas para dar cabida a toda la cadena productiva con el objetivo de desarrollar el mejor producto de lujo con el que puedas soñar.</p>
-        <p>Este pueblo, enclavado en un valle pequeño, rodeado por sierras, conserva el saber hacer de nuestro oficio. Un legado que se ha ido heredando de padres a hijos desde que en 1.733 comenzaran a darse de alta las primeras curtidurías, precursoras de la industria que hoy conocemos como la de la Piel de Ubrique.</p>
-      </div>
-      <div class="landing-cta-group">
-        <button class="btn-landing-primary" onclick="irALogin()">Acceder al directorio →</button>
-        <button class="btn-landing-outline" onclick="irARegistroMarca()">Soy una marca · Solicitar acceso</button>
-        <button class="btn-landing-outline" onclick="irARegistroEmpresa()">Soy fabricante · Solicitar alta</button>
-      </div>
-    </div>
+  <!-- Selector de idioma -->
+  <div class="lang-switcher" id="langSwitcher">
+    <button class="lang-btn active" onclick="setLang('es',this)">ES</button>
+    <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+  </div>
 
-    <div class="landing-login-bar">
-      <p>¿Tienes acceso al directorio? <a onclick="irALogin()">Iniciar sesión →</a> &nbsp;·&nbsp; ¿Eres una marca? <a onclick="irARegistroMarca()">Solicitar acceso</a></p>
-    </div>
+  <div class="landing-nueva">
+
+    <!-- COLUMNA IZQUIERDA — HERO con foto -->
+    <section class="lhero" aria-label="Presentación del cluster">
+      <div class="lhero-inner">
+
+        <div class="lhero-head">
+          <div class="lhero-brand">
+            <span class="lhero-brand-dot"></span>
+            <span id="lBrandText">Piel de Ubrique · Asopiel</span>
+          </div>
+
+          <!-- Foto real del cluster -->
+          <div class="lhero-media">
+            <img src="https://pub-28e56553b4f848e2b5c9b7b5ed820cfc.r2.dev/hero.webp"
+                 alt="Taller de marroquinería en Ubrique"
+                 onerror="this.parentElement.style.background='linear-gradient(160deg,rgba(43,107,74,.6)0%,rgba(26,61,46,.95)100%)'">
+          </div>
+        </div>
+
+        <div class="lhero-copy">
+          <h1 class="lhero-title" id="lHeroTitle">
+            El mayor ecosistema industrial de<br>
+            <em>marroquinería de Europa</em>
+          </h1>
+          <p class="lhero-body" id="lHeroBody">
+            Un término municipal donde confluyen empresas para dar cabida a toda la cadena productiva con el objetivo de desarrollar el mejor producto de lujo. Un legado heredado desde 1.733.
+          </p>
+        </div>
+
+        <div class="lhero-stats">
+          <div class="lhero-stat">
+            <div class="lhero-stat-value"><span class="accent">3.483.379</span></div>
+            <div class="lhero-stat-label" id="lStatProd">Productos fabricados · 2025</div>
+          </div>
+          <div class="lhero-stat">
+            <div class="lhero-stat-value"><span class="accent">3.552</span></div>
+            <div class="lhero-stat-label" id="lStatWorkers">Trabajadores del sector</div>
+          </div>
+          <div class="lhero-stat">
+            <div class="lhero-stat-value">96</div>
+            <div class="lhero-stat-label" id="lStatSedes">Centros de trabajo</div>
+          </div>
+          <div class="lhero-stat">
+            <div class="lhero-stat-value" id="lStatMarcas">—</div>
+            <div class="lhero-stat-label" id="lStatMarcasLabel">Marcas en directorio</div>
+          </div>
+        </div>
+
+        <div class="lhero-badge">
+          <span class="lhero-badge-dot"></span>
+          <span id="lBadgeText">Gestionado por Asopiel · Ubrique, Sierra de Cádiz</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- COLUMNA DERECHA — PANEL DE ACCESO -->
+    <section class="lpanel" aria-label="Acceso al directorio">
+
+      <div class="lpanel-logo">
+        <div class="lpanel-logo-mark">🏭</div>
+        <span id="lLogoText">Mapa del Sector</span>
+      </div>
+
+      <h2 class="lpanel-title" id="lPanelTitle">Accede al directorio industrial</h2>
+      <p class="lpanel-sub" id="lPanelSub">Selecciona tu perfil para solicitar alta, o inicia sesión si ya tienes acceso.</p>
+
+      <div class="lcta-group">
+        <button class="lcta-btn lcta-solid" onclick="irARegistroEmpresa()">
+          <span id="lBtn1Title">Soy fabricante</span>
+          <small id="lBtn1Sub">Solicitar alta en el directorio</small>
+        </button>
+        <button class="lcta-btn lcta-outline" onclick="irARegistroMarca()">
+          <span id="lBtn2Title">Soy una marca</span>
+          <small id="lBtn2Sub">Solicitar acceso al catálogo</small>
+        </button>
+      </div>
+
+      <div class="ldivider">
+        <div class="ldivider-line"></div>
+        <span class="ldivider-text" id="lDividerText">o si ya tienes cuenta</span>
+        <div class="ldivider-line"></div>
+      </div>
+
+      <!-- Formulario login -->
+      <div id="lLoginError" class="lform-error">Usuario o contraseña incorrectos.</div>
+      <form onsubmit="doLoginLanding(event)">
+        <div class="lform-group">
+          <label class="lform-label" for="lEmail" id="lLabelEmail">Email</label>
+          <input class="lform-input" type="email" id="lEmail" name="email"
+                 placeholder="correo@empresa.com" autocomplete="email" required>
+        </div>
+        <div class="lform-group">
+          <label class="lform-label" for="lPass" id="lLabelPass">Contraseña</label>
+          <input class="lform-input" type="password" id="lPass" name="password"
+                 placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <button class="lbtn-submit" type="submit" id="lBtnSubmit">
+          <span id="lBtnText">Entrar al directorio →</span>
+        </button>
+      </form>
+
+      <p class="lform-link" onclick="irAContacto()" id="lContactText">
+        ¿Problemas de acceso? Contactar con Asopiel
+      </p>
+
+      <div class="lpanel-badge">
+        <span class="lpanel-badge-dot"></span>
+        <span id="lFooterText">Gestionado por Asopiel</span>
+      </div>
+
+    </section>
   </div>
 </div>
 
