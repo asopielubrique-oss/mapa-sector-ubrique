@@ -1322,6 +1322,131 @@ async function apiFetch(path, opts = {}) {
   catch { return { ok: false, error: 'Respuesta no válida (' + res.status + ')' }; }
 }
 
+// ── Landing nueva: login + idioma ─────────────────────────────────────────────
+const TEXTOS = {
+  es: {
+    brand: 'Piel de Ubrique · Asopiel',
+    heroTitle: 'El mayor ecosistema industrial de<br><em>marroquinería de Europa</em>',
+    heroBody: 'Un término municipal donde confluyen empresas para dar cabida a toda la cadena productiva con el objetivo de desarrollar el mejor producto de lujo. Un legado heredado desde 1.733.',
+    statProd: 'Productos fabricados · 2025',
+    statWorkers: 'Trabajadores del sector',
+    statSedes: 'Centros de trabajo',
+    statMarcasLabel: 'Marcas en directorio',
+    badge: 'Gestionado por Asopiel · Ubrique, Sierra de Cádiz',
+    logoText: 'Mapa del Sector',
+    panelTitle: 'Accede al directorio industrial',
+    panelSub: 'Selecciona tu perfil para solicitar alta, o inicia sesión si ya tienes acceso.',
+    btn1Title: 'Soy fabricante', btn1Sub: 'Solicitar alta en el directorio',
+    btn2Title: 'Soy una marca', btn2Sub: 'Solicitar acceso al catálogo',
+    divider: 'o si ya tienes cuenta',
+    labelEmail: 'Email', labelPass: 'Contraseña',
+    btnText: 'Entrar al directorio →',
+    contact: '¿Problemas de acceso? Contactar con Asopiel',
+    footer: 'Gestionado por Asopiel',
+    loginError: 'Usuario o contraseña incorrectos.'
+  },
+  en: {
+    brand: 'Piel de Ubrique · Asopiel',
+    heroTitle: 'The largest industrial ecosystem of<br><em>leather goods in Europe</em>',
+    heroBody: 'A single municipality where companies converge to cover the entire production chain, crafting the finest luxury leather goods. A heritage passed down since 1733.',
+    statProd: 'Products manufactured · 2025',
+    statWorkers: 'Sector workers',
+    statSedes: 'Production centres',
+    statMarcasLabel: 'Brands in directory',
+    badge: 'Managed by Asopiel · Ubrique, Sierra de Cádiz',
+    logoText: 'Sector Map',
+    panelTitle: 'Access the industrial directory',
+    panelSub: 'Select your profile to request registration, or log in if you already have access.',
+    btn1Title: 'I\'m a manufacturer', btn1Sub: 'Request directory listing',
+    btn2Title: 'I\'m a brand', btn2Sub: 'Request catalogue access',
+    divider: 'or if you already have an account',
+    labelEmail: 'Email', labelPass: 'Password',
+    btnText: 'Enter the directory →',
+    contact: 'Access issues? Contact Asopiel',
+    footer: 'Managed by Asopiel',
+    loginError: 'Incorrect username or password.'
+  }
+};
+let currentLang = 'es';
+
+function setLang(lang, btn) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const t = TEXTOS[lang];
+  const set = (id, html, inner = false) => {
+    const el = document.getElementById(id);
+    if (el) { if (inner) el.innerHTML = html; else el.textContent = html; }
+  };
+  set('lBrandText', t.brand);
+  set('lHeroTitle', t.heroTitle, true);
+  set('lHeroBody', t.heroBody);
+  set('lStatProd', t.statProd);
+  set('lStatWorkers', t.statWorkers);
+  set('lStatSedes', t.statSedes);
+  set('lStatMarcasLabel', t.statMarcasLabel);
+  set('lBadgeText', t.badge);
+  set('lLogoText', t.logoText);
+  set('lPanelTitle', t.panelTitle);
+  set('lPanelSub', t.panelSub);
+  set('lBtn1Title', t.btn1Title);
+  set('lBtn1Sub', t.btn1Sub);
+  set('lBtn2Title', t.btn2Title);
+  set('lBtn2Sub', t.btn2Sub);
+  set('lDividerText', t.divider);
+  set('lLabelEmail', t.labelEmail);
+  set('lLabelPass', t.labelPass);
+  set('lBtnText', t.btnText);
+  set('lContactText', t.contact);
+  set('lFooterText', t.footer);
+}
+
+async function doLoginLanding(e) {
+  e.preventDefault();
+  const email = document.getElementById('lEmail').value.trim().toLowerCase();
+  const pass  = document.getElementById('lPass').value;
+  const err   = document.getElementById('lLoginError');
+  const btn   = document.getElementById('lBtnSubmit');
+  err.style.display = 'none';
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+  loading(true, currentLang === 'en' ? 'Verifying credentials…' : 'Verificando credenciales…');
+  try {
+    const data = await apiFetch('/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
+    if (!data.token) {
+      loading(false);
+      err.textContent = TEXTOS[currentLang].loginError;
+      err.style.display = 'block';
+    } else {
+      iniciarSesion({ token: data.token, usuario: data.user });
+    }
+  } catch(ex) {
+    loading(false);
+    showToast('Error de conexión con el servidor.', true);
+  } finally {
+    btn.disabled = false;
+    btn.style.opacity = '';
+  }
+}
+
+function irAContacto() {
+  window.open('mailto:info@asopiel.com', '_blank');
+}
+
+// Cargar stat de marcas en la landing
+async function cargarStatMarcasLanding() {
+  try {
+    const res = await fetch('/api/stats');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.marcas != null) {
+      const el = document.getElementById('lStatMarcas');
+      if (el) el.textContent = data.marcas;
+    }
+  } catch { /* placeholder "—" es suficiente */ }
+}
+cargarStatMarcasLanding();
+
 // ── Login ─────────────────────────────────────────────────────────────────────
 function switchLoginTab(tab, btn) {
   document.querySelectorAll('.login-tab').forEach(b => b.classList.remove('active'));
