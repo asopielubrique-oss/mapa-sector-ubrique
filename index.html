@@ -690,7 +690,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
               <div class="user-role" id="userDisplayRole">—</div>
             </div>
           </div>
-          <button class="nav-btn" onclick="doLogout()" style="color:rgba(255,255,255,0.3)">Salir</button>
+          <button class="nav-btn" id="navLogout" onclick="doLogout()" style="color:rgba(255,255,255,0.3)">Salir</button>
         </div>
       </nav>
     </div>
@@ -700,14 +700,14 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   <div id="viewDirectorio" class="view active">
     <div class="directorio-header">
       <div class="directorio-header-inner">
-        <p class="dir-title">Directorio Industrial</p>
+        <p class="dir-title" id="dirTitle">Directorio Industrial</p>
         <p class="dir-subtitle" id="dirSubtitle">Piel de Ubrique</p>
         <div class="stats-bar">
-          <div class="stat"><span class="stat-n" id="statTotal">—</span><span class="stat-label">Empresas</span></div>
-          <div class="stat"><span class="stat-n" id="statFab">—</span><span class="stat-label">Fabricantes</span></div>
-          <div class="stat"><span class="stat-n" id="statTaller">—</span><span class="stat-label">Talleres</span></div>
-          <div class="stat"><span class="stat-n" id="statProv">—</span><span class="stat-label">Proveedores</span></div>
-          <div class="stat"><span class="stat-n" id="statServ">—</span><span class="stat-label">Servicios</span></div>
+          <div class="stat"><span class="stat-n" id="statTotal">—</span><span class="stat-label" id="statLabelTotal">Empresas</span></div>
+          <div class="stat"><span class="stat-n" id="statFab">—</span><span class="stat-label" id="statLabelFab">Fabricantes</span></div>
+          <div class="stat"><span class="stat-n" id="statTaller">—</span><span class="stat-label" id="statLabelTaller">Talleres</span></div>
+          <div class="stat"><span class="stat-n" id="statProv">—</span><span class="stat-label" id="statLabelProv">Proveedores</span></div>
+          <div class="stat"><span class="stat-n" id="statServ">—</span><span class="stat-label" id="statLabelServ">Servicios</span></div>
         </div>
       </div>
     </div>
@@ -738,26 +738,26 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
         </div>
         <div class="filter-select">
           <select id="filtroCategoria" onchange="renderEmpresas()">
-            <option value="">Todas las categorías</option>
-            <option value="fabricante">Fabricantes</option>
-            <option value="taller">Talleres auxiliares</option>
-            <option value="proveedor">Proveedores</option>
-            <option value="servicios">Servicios a empresas</option>
+            <option value="" id="filtroCatAll">Todas las categorías</option>
+            <option value="fabricante" id="filtroCatFab">Fabricantes</option>
+            <option value="taller" id="filtroCatTaller">Talleres auxiliares</option>
+            <option value="proveedor" id="filtroCatProv">Proveedores</option>
+            <option value="servicios" id="filtroCatServ">Servicios a empresas</option>
           </select>
         </div>
         <div class="filter-select">
           <select id="filtroActividad" onchange="renderEmpresas()">
-            <option value="">Todas las actividades</option>
+            <option value="" id="filtroActAll">Todas las actividades</option>
           </select>
         </div>
         <div class="filter-select">
           <select id="filtroCapacidad" onchange="renderEmpresas()">
-            <option value="">Capacidad nuevos proyectos</option>
-            <option value="Sí">Con capacidad</option>
-            <option value="No">Sin capacidad</option>
+            <option value="" id="filtroCapAll">Capacidad nuevos proyectos</option>
+            <option value="Sí" id="filtroCapSi">Con capacidad</option>
+            <option value="No" id="filtroCapNo">Sin capacidad</option>
           </select>
         </div>
-        <button class="btn-filtro-clear" onclick="clearFiltros()">Limpiar</button>
+        <button class="btn-filtro-clear" id="btnLimpiarFiltros" onclick="clearFiltros()">Limpiar</button>
       </div>
     </div>
     <div class="empresas-grid-wrapper">
@@ -889,9 +889,9 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
         <!-- Selector de idioma -->
         <div class="form-section" style="padding-bottom:20px">
           <div class="lang-selector">
-            <button class="lang-btn active" onclick="setLang('es',this)">🇪🇸 Español</button>
-            <button class="lang-btn" onclick="setLang('en',this)">🇬🇧 English</button>
-            <button class="lang-btn" onclick="setLang('fr',this)">🇫🇷 Français</button>
+            <button class="lang-btn active" onclick="setLangMarca('es',this)">🇪🇸 Español</button>
+            <button class="lang-btn" onclick="setLangMarca('en',this)">🇬🇧 English</button>
+            <button class="lang-btn" onclick="setLangMarca('fr',this)">🇫🇷 Français</button>
           </div>
           <!-- Indicador de pasos -->
           <div class="step-indicator">
@@ -1033,8 +1033,8 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   <div id="viewTalleres" class="view">
     <div class="talleres-hero">
       <div class="talleres-hero-inner">
-        <p class="talleres-title">Talleres Especializados</p>
-        <p class="talleres-sub">Directorio privado de talleres auxiliares del sector. Acceso exclusivo para fabricantes montadores.</p>
+        <p class="talleres-title" id="talleresTitle">Talleres Especializados</p>
+        <p class="talleres-sub" id="talleresSub">Directorio privado de talleres auxiliares del sector. Acceso exclusivo para fabricantes montadores.</p>
       </div>
     </div>
     <div class="talleres-content" id="talleresContent">
@@ -1046,36 +1046,36 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   <div id="viewMapa" class="view">
     <div class="mapa-layout">
       <div class="mapa-toolbar">
-        <span class="mapa-toolbar-title">Filtrar</span>
+        <span class="mapa-toolbar-title" id="mapaFiltrarLabel">Filtrar</span>
         <select class="mapa-filter-select" id="mapaFiltroCategoria" onchange="renderMapa()">
-          <option value="">Todas las categorías</option>
-          <option value="fabricante">Fabricantes</option>
-          <option value="taller">Talleres auxiliares</option>
-          <option value="proveedor">Proveedores</option>
-          <option value="servicios">Servicios</option>
+          <option value="" id="mapaFiltroCatAll">Todas las categorías</option>
+          <option value="fabricante" id="mapaFiltroCatFab">Fabricantes</option>
+          <option value="taller" id="mapaFiltroCatTaller">Talleres auxiliares</option>
+          <option value="proveedor" id="mapaFiltroCatProv">Proveedores</option>
+          <option value="servicios" id="mapaFiltroCatServ">Servicios</option>
         </select>
         <select class="mapa-filter-select" id="mapaFiltroActividad" onchange="renderMapa()">
-          <option value="">Todas las actividades</option>
+          <option value="" id="mapaFiltroActAll">Todas las actividades</option>
         </select>
-        <button class="mapa-btn-reset" onclick="resetMapaFiltros()">Limpiar filtros</button>
+        <button class="mapa-btn-reset" id="btnLimpiarMapaFiltros" onclick="resetMapaFiltros()">Limpiar filtros</button>
         <span class="mapa-count" id="mapaCount"></span>
       </div>
       <div id="mapaContainer">
         <div id="mapaLeaflet"></div>
         <div class="mapa-empty" id="mapaEmpty" style="display:none">
           <div class="mapa-empty-icon">📍</div>
-          <p>No hay empresas con ubicación registrada que coincidan con los filtros.</p>
+          <p id="mapaEmptyText">No hay empresas con ubicación registrada que coincidan con los filtros.</p>
         </div>
         <div class="mapa-loading" id="mapaLoadingOverlay">
           <div class="mapa-loading-spin"></div>
-          <p>Cargando mapa…</p>
+          <p id="mapaLoadingText">Cargando mapa…</p>
         </div>
         <div class="mapa-legend" id="mapaLegend" style="display:none">
-          <div class="mapa-legend-title">Leyenda</div>
-          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#2B6B4A"></div> Fabricante</div>
-          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#7B4F2E"></div> Taller auxiliar</div>
-          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#1A5A8A"></div> Proveedor</div>
-          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#6B4D9B"></div> Servicios</div>
+          <div class="mapa-legend-title" id="mapaLegendTitle">Leyenda</div>
+          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#2B6B4A"></div> <span id="mapaLegendFab">Fabricante</span></div>
+          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#7B4F2E"></div> <span id="mapaLegendTaller">Taller auxiliar</span></div>
+          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#1A5A8A"></div> <span id="mapaLegendProv">Proveedor</span></div>
+          <div class="mapa-legend-item"><div class="mapa-legend-dot" style="background:#6B4D9B"></div> <span id="mapaLegendServ">Servicios</span></div>
         </div>
       </div>
     </div>
@@ -1085,22 +1085,22 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   <div id="viewAdmin" class="view">
     <div class="admin-layout">
       <aside class="admin-sidebar">
-        <p class="admin-sidebar-title">Panel Asopiel</p>
-        <div class="admin-nav-item active" onclick="showAdminSection('solicitudes', this)"><span>📋</span> Solicitudes empresas</div>
-        <div class="admin-nav-item" onclick="showAdminSection('marcas', this)"><span>🏷️</span> Solicitudes marcas</div>
-        <div class="admin-nav-item" onclick="showAdminSection('empresas', this)"><span>🏢</span> Empresas activas</div>
-        <div class="admin-nav-item" onclick="showAdminSection('talleresSol', this)"><span>🔧</span> Accesos talleres</div>
-        <div class="admin-nav-item" onclick="showAdminSection('usuarios', this)"><span>👥</span> Usuarios y accesos</div>
+        <p class="admin-sidebar-title" id="adminSidebarTitle">Panel Asopiel</p>
+        <div class="admin-nav-item active" onclick="showAdminSection('solicitudes', this)"><span>📋</span> <span id="adminNav1">Solicitudes empresas</span></div>
+        <div class="admin-nav-item" onclick="showAdminSection('marcas', this)"><span>🏷️</span> <span id="adminNav2">Solicitudes marcas</span></div>
+        <div class="admin-nav-item" onclick="showAdminSection('empresas', this)"><span>🏢</span> <span id="adminNav3">Empresas activas</span></div>
+        <div class="admin-nav-item" onclick="showAdminSection('talleresSol', this)"><span>🔧</span> <span id="adminNav4">Accesos talleres</span></div>
+        <div class="admin-nav-item" onclick="showAdminSection('usuarios', this)"><span>👥</span> <span id="adminNav5">Usuarios y accesos</span></div>
       </aside>
       <main class="admin-main">
 
         <!-- Solicitudes empresa -->
         <div id="adminSolicitudes">
-          <p class="admin-page-title">Solicitudes de alta — Empresas</p>
-          <p class="admin-page-sub">Empresas que han completado el formulario y esperan validación.</p>
+          <p class="admin-page-title" id="adminSolTitle">Solicitudes de alta — Empresas</p>
+          <p class="admin-page-sub" id="adminSolSub">Empresas que han completado el formulario y esperan validación.</p>
           <div class="admin-table-wrapper">
             <table class="admin-table">
-              <thead><tr><th>Empresa</th><th>Tipo</th><th>Responsable</th><th>Email</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <thead><tr><th id="thEmpresa">Empresa</th><th id="thTipo">Tipo</th><th id="thResponsable">Responsable</th><th id="thEmail">Email</th><th id="thEstado">Estado</th><th id="thAcciones">Acciones</th></tr></thead>
               <tbody id="tablaSolicitudes"><tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:32px">Cargando…</td></tr></tbody>
             </table>
           </div>
@@ -1108,11 +1108,11 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
         <!-- Solicitudes marca -->
         <div id="adminMarcas" style="display:none">
-          <p class="admin-page-title">Solicitudes de acceso — Marcas</p>
-          <p class="admin-page-sub">Marcas que solicitan acceso al directorio. Al aprobar, asigna qué categorías pueden ver y se generan sus credenciales automáticamente.</p>
+          <p class="admin-page-title" id="adminMarcasTitle">Solicitudes de acceso — Marcas</p>
+          <p class="admin-page-sub" id="adminMarcasSub">Marcas que solicitan acceso al directorio. Al aprobar, asigna qué categorías pueden ver y se generan sus credenciales automáticamente.</p>
           <div class="admin-table-wrapper">
             <table class="admin-table">
-              <thead><tr><th>Marca</th><th>Contacto</th><th>País</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <thead><tr><th id="thMarca">Marca</th><th id="thContacto">Contacto</th><th id="thPais">País</th><th id="thEstado2">Estado</th><th id="thAcciones2">Acciones</th></tr></thead>
               <tbody id="tablaMarcas"><tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">Cargando…</td></tr></tbody>
             </table>
           </div>
@@ -1134,11 +1134,11 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
         <!-- Empresas activas -->
         <div id="adminEmpresas" style="display:none">
-          <p class="admin-page-title">Empresas activas</p>
-          <p class="admin-page-sub">Todas las empresas visibles en el directorio.</p>
+          <p class="admin-page-title" id="adminEmpresasTitle">Empresas activas</p>
+          <p class="admin-page-sub" id="adminEmpresasSub">Todas las empresas visibles en el directorio.</p>
           <div class="admin-table-wrapper">
             <table class="admin-table">
-              <thead><tr><th>Empresa</th><th>Categoría</th><th>Plantilla</th><th>Capacidad</th><th>Acciones</th></tr></thead>
+              <thead><tr><th id="thEmpresa2">Empresa</th><th id="thCategoria">Categoría</th><th id="thPlantilla">Plantilla</th><th id="thCapacidad">Capacidad</th><th id="thAcciones3">Acciones</th></tr></thead>
               <tbody id="tablaEmpresas"><tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">Cargando…</td></tr></tbody>
             </table>
           </div>
@@ -1146,8 +1146,8 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
         <!-- Accesos talleres -->
         <div id="adminTalleresSol" style="display:none">
-          <p class="admin-page-title">Accesos a Talleres Especializados</p>
-          <p class="admin-page-sub">Fabricantes montadores que solicitan acceso al directorio de talleres. Los fabricantes adheridos a Asopiel obtienen acceso automático; el resto requiere autorización manual.</p>
+          <p class="admin-page-title" id="adminTalleresTitle">Accesos a Talleres Especializados</p>
+          <p class="admin-page-sub" id="adminTalleresSub">Fabricantes montadores que solicitan acceso al directorio de talleres. Los fabricantes adheridos a Asopiel obtienen acceso automático; el resto requiere autorización manual.</p>
           <div class="admin-kpis" id="talleresKpis">
             <div class="kpi-card"><div class="kpi-n" id="kpiTallerPend">—</div><div class="kpi-label">Pendientes</div></div>
             <div class="kpi-card"><div class="kpi-n" id="kpiTallerAuto">—</div><div class="kpi-label">Acceso automático (Asopiel)</div></div>
@@ -1163,11 +1163,11 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
         <!-- Usuarios -->
         <div id="adminUsuarios" style="display:none">
-          <p class="admin-page-title">Usuarios y accesos</p>
-          <p class="admin-page-sub">Todos los usuarios con acceso a la plataforma. Las marcas muestran los permisos de directorio asignados.</p>
+          <p class="admin-page-title" id="adminUsuariosTitle">Usuarios y accesos</p>
+          <p class="admin-page-sub" id="adminUsuariosSub">Todos los usuarios con acceso a la plataforma. Las marcas muestran los permisos de directorio asignados.</p>
           <div class="admin-table-wrapper">
             <table class="admin-table">
-              <thead><tr><th>Email</th><th>Rol</th><th>Entidad</th><th>Permisos / Info</th><th>Estado</th><th>Acciones</th></tr></thead>
+              <thead><tr><th id="thEmailU">Email</th><th id="thRol">Rol</th><th id="thEntidad">Entidad</th><th id="thPermisos">Permisos / Info</th><th id="thEstadoU">Estado</th><th id="thAccionesU">Acciones</th></tr></thead>
               <tbody id="tablaUsuarios"><tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:32px">Cargando…</td></tr></tbody>
             </table>
           </div>
@@ -1401,6 +1401,446 @@ function setLang(lang, btn) {
   set('lFooterText', t.footer);
 }
 
+// ── Intranet i18n ─────────────────────────────────────────────────────────────
+const INTRANET_I18N = {
+  es: {
+    // Nav
+    navDirectorio: 'Directorio',
+    navMapa: 'Mapa',
+    navTalleres: 'Talleres especializados',
+    navRegistro: 'Registrar empresa',
+    navAdmin: 'Administración',
+    navLogout: 'Salir',
+    // Roles
+    roleAdmin: 'Administrador Asopiel',
+    roleEmpresa: 'Empresa del sector',
+    roleMarca: 'Acceso marca',
+    roleConsulta: 'Acceso consulta',
+    // Directorio header
+    dirTitle: 'Directorio Industrial',
+    dirSubtitleDefault: 'Piel de Ubrique',
+    dirAccesoPrefix: 'Acceso a: ',
+    // Stats
+    statLabelTotal: 'Empresas',
+    statLabelFab: 'Fabricantes',
+    statLabelTaller: 'Talleres',
+    statLabelProv: 'Proveedores',
+    statLabelServ: 'Servicios',
+    // Filtros directorio
+    searchPlaceholder: 'Buscar empresa, actividad…',
+    filtroCatAll: 'Todas las categorías',
+    filtroCatFab: 'Fabricantes',
+    filtroCatTaller: 'Talleres auxiliares',
+    filtroCatProv: 'Proveedores',
+    filtroCatServ: 'Servicios a empresas',
+    filtroActAll: 'Todas las actividades',
+    filtroCapAll: 'Capacidad nuevos proyectos',
+    filtroCapSi: 'Con capacidad',
+    filtroCapNo: 'Sin capacidad',
+    btnLimpiarFiltros: 'Limpiar',
+    // Directorio cards
+    cardUbicacion: 'Ubicación',
+    cardPlantilla: 'Plantilla',
+    cardCapacidad: 'Capacidad',
+    cardPersonas: 'personas',
+    cardProd: 'prod.',
+    cardAcepta: '✅ Acepta nuevos proyectos',
+    cardSinCap: '⏸ Sin capacidad ahora',
+    btnContactar: 'Contactar',
+    btnVerFicha: 'Ver ficha',
+    // Modal ficha
+    modalContacto: 'Contacto',
+    modalResponsable: 'Responsable',
+    modalTel: 'Teléfono',
+    modalEmail: 'Email',
+    modalDir: 'Dirección',
+    modalWeb: 'Web',
+    modalEquipo: 'Equipo y capacidad',
+    modalTrabProd: 'Trabajadores producción',
+    modalTrabTotal: 'Trabajadores totales',
+    modalNuevosProyectos: 'Nuevos proyectos',
+    modalDisponible: '✅ Disponible para nuevos proyectos',
+    modalSinCap: '⏸ Sin capacidad disponible ahora',
+    modalActividades: 'Actividades',
+    modalFotos: 'Fotografías',
+    // Loading
+    loadingDirectorio: 'Cargando directorio…',
+    loadingVerificando: 'Verificando credenciales…',
+    loadingVerificandoAcceso: 'Verificando acceso…',
+    loadingTalleres: 'Cargando talleres…',
+    // Errors / empty states
+    emptyNoCoincide: 'No hay empresas que coincidan con los filtros.',
+    emptyNoTalleres: 'No hay talleres registrados en este momento.',
+    errorDirectorio: 'Error al cargar el directorio.',
+    errorConexion: 'Error de conexión con el servidor.',
+    errorTalleres: 'Error al cargar el directorio de talleres.',
+    // Newsletter
+    newsletterLabel: 'Canal de noticias · Asopiel',
+    newsletterTitleDefault: 'Mantente al día del sector',
+    newsletterDescDefault: 'Suscríbete al canal de noticias de Asopiel en Telegram.',
+    newsletterTitleMarca: 'Canal de noticias para marcas',
+    newsletterDescMarca: 'Tendencias en fabricación de lujo, nuevos fabricantes adheridos y oportunidades de sourcing en Ubrique.',
+    newsletterBtnMarca: 'Unirse · Canal Marcas',
+    newsletterTitleEmpresa: 'Canal de noticias del sector',
+    newsletterDescEmpresa: 'Convocatorias de Asopiel, novedades del sector, ferias y formación especializada.',
+    newsletterBtnEmpresa: 'Unirse · Canal Empresas',
+    // Talleres
+    talleresTitle: 'Talleres Especializados',
+    talleresSub: 'Directorio privado de talleres auxiliares del sector. Acceso exclusivo para fabricantes montadores.',
+    talleresPendingTitle: 'Solicitud en revisión',
+    talleresPendingDesc: 'Tu solicitud de acceso al directorio de talleres especializados está siendo revisada por Asopiel. Recibirás notificación por email cuando sea autorizada.',
+    talleresLockedTitle: 'Acceso restringido',
+    talleresLockedDesc: 'Como fabricante montador, puedes solicitar acceso al directorio de talleres especializados. Asopiel revisará tu solicitud.',
+    talleresBtnSolicitar: 'Solicitar acceso →',
+    talleresConfidencial: 'Este directorio es <strong>confidencial</strong>. La información de contacto está destinada exclusivamente a la coordinación de producción entre fabricantes y talleres adheridos al sector.',
+    talleresActividades: 'Actividades',
+    talleresResponsable: 'Responsable',
+    talleresTel: 'Teléfono',
+    talleresEmail: 'Email',
+    talleresCapacidad: 'Capacidad',
+    talleresDisponible: '✅ Disponible',
+    talleresSinCap: '⏸ Sin capacidad',
+    talleresErrorConexion: 'No se pudo verificar el acceso. Inténtalo de nuevo.',
+    // Mapa
+    mapaFiltrarLabel: 'Filtrar',
+    mapaFiltroCatAll: 'Todas las categorías',
+    mapaFiltroCatFab: 'Fabricantes',
+    mapaFiltroCatTaller: 'Talleres auxiliares',
+    mapaFiltroCatProv: 'Proveedores',
+    mapaFiltroCatServ: 'Servicios',
+    mapaFiltroActAll: 'Todas las actividades',
+    btnLimpiarMapaFiltros: 'Limpiar filtros',
+    mapaLegendTitle: 'Leyenda',
+    mapaLegendFab: 'Fabricante',
+    mapaLegendTaller: 'Taller auxiliar',
+    mapaLegendProv: 'Proveedor',
+    mapaLegendServ: 'Servicios',
+    mapaEmpty: 'No hay empresas con ubicación registrada que coincidan con los filtros.',
+    mapaCargando: 'Cargando mapa…',
+    // Admin sidebar
+    adminSidebarTitle: 'Panel Asopiel',
+    adminNav1: 'Solicitudes empresas',
+    adminNav2: 'Solicitudes marcas',
+    adminNav3: 'Empresas activas',
+    adminNav4: 'Accesos talleres',
+    adminNav5: 'Usuarios y accesos',
+    // Admin sections
+    adminSolTitle: 'Solicitudes de alta — Empresas',
+    adminSolSub: 'Empresas que han completado el formulario y esperan validación.',
+    adminMarcasTitle: 'Solicitudes de acceso — Marcas',
+    adminMarcasSub: 'Marcas que solicitan acceso al directorio. Al aprobar, asigna qué categorías pueden ver y se generan sus credenciales automáticamente.',
+    adminEmpresasTitle: 'Empresas activas',
+    adminEmpresasSub: 'Todas las empresas visibles en el directorio.',
+    adminTalleresTitle: 'Accesos a Talleres Especializados',
+    adminTalleresSub: 'Fabricantes montadores que solicitan acceso al directorio de talleres. Los fabricantes adheridos a Asopiel obtienen acceso automático; el resto requiere autorización manual.',
+    adminUsuariosTitle: 'Usuarios y accesos',
+    adminUsuariosSub: 'Todos los usuarios con acceso a la plataforma. Las marcas muestran los permisos de directorio asignados.',
+    // Admin table headers
+    thEmpresa: 'Empresa', thTipo: 'Tipo', thResponsable: 'Responsable', thEmail: 'Email',
+    thEstado: 'Estado', thAcciones: 'Acciones',
+    thMarca: 'Marca', thContacto: 'Contacto', thPais: 'País', thEstado2: 'Estado', thAcciones2: 'Acciones',
+    thEmpresa2: 'Empresa', thCategoria: 'Categoría', thPlantilla: 'Plantilla', thCapacidad: 'Capacidad', thAcciones3: 'Acciones',
+    thEmailU: 'Email', thRol: 'Rol', thEntidad: 'Entidad', thPermisos: 'Permisos / Info', thEstadoU: 'Estado', thAccionesU: 'Acciones',
+    // Admin actions
+    adminPendiente: 'Pendiente',
+    adminAprobar: '✓ Aprobar',
+    adminRechazar: '✗ Rechazar',
+    adminVerFicha: 'Ver ficha',
+    adminAprobarAcceso: 'Aprobar acceso',
+    adminEditarAcceso: 'Editar acceso',
+    adminRevocar: 'Revocar',
+    adminVerFichaBtn: 'Ver ficha',
+    adminQuitarAsociado: 'Quitar asociado',
+    adminMarcarAsociado: 'Marcar asociado',
+    adminDarBaja: 'Dar de baja',
+    adminCambiarClave: 'Cambiar clave',
+    adminCapSi: '✅ Sí',
+    adminCapNo: '⏸ No',
+    // Cat labels
+    catFabricante: 'Fabricante',
+    catTaller: 'Taller auxiliar',
+    catAsocFab: 'Fabricante · Asopiel',
+    catNoAsocFab: 'Fabricante',
+    catAsocTaller: 'Taller auxiliar · Asopiel',
+    catNoAsocTaller: 'Taller auxiliar',
+    catAsocProv: 'Proveedor · Asopiel',
+    catNoAsocProv: 'Proveedor',
+    catServicios: 'Servicios',
+  },
+  en: {
+    // Nav
+    navDirectorio: 'Directory',
+    navMapa: 'Map',
+    navTalleres: 'Specialist workshops',
+    navRegistro: 'Register company',
+    navAdmin: 'Administration',
+    navLogout: 'Log out',
+    // Roles
+    roleAdmin: 'Asopiel Administrator',
+    roleEmpresa: 'Sector company',
+    roleMarca: 'Brand access',
+    roleConsulta: 'Read-only access',
+    // Directorio header
+    dirTitle: 'Industrial Directory',
+    dirSubtitleDefault: 'Piel de Ubrique',
+    dirAccesoPrefix: 'Access to: ',
+    // Stats
+    statLabelTotal: 'Companies',
+    statLabelFab: 'Manufacturers',
+    statLabelTaller: 'Workshops',
+    statLabelProv: 'Suppliers',
+    statLabelServ: 'Services',
+    // Filtros directorio
+    searchPlaceholder: 'Search company, activity…',
+    filtroCatAll: 'All categories',
+    filtroCatFab: 'Manufacturers',
+    filtroCatTaller: 'Auxiliary workshops',
+    filtroCatProv: 'Suppliers',
+    filtroCatServ: 'Business services',
+    filtroActAll: 'All activities',
+    filtroCapAll: 'Capacity for new projects',
+    filtroCapSi: 'Available',
+    filtroCapNo: 'No capacity',
+    btnLimpiarFiltros: 'Clear',
+    // Directorio cards
+    cardUbicacion: 'Location',
+    cardPlantilla: 'Staff',
+    cardCapacidad: 'Capacity',
+    cardPersonas: 'people',
+    cardProd: 'prod.',
+    cardAcepta: '✅ Open to new projects',
+    cardSinCap: '⏸ No capacity now',
+    btnContactar: 'Contact',
+    btnVerFicha: 'View profile',
+    // Modal ficha
+    modalContacto: 'Contact',
+    modalResponsable: 'Contact person',
+    modalTel: 'Phone',
+    modalEmail: 'Email',
+    modalDir: 'Address',
+    modalWeb: 'Website',
+    modalEquipo: 'Team & capacity',
+    modalTrabProd: 'Production workers',
+    modalTrabTotal: 'Total workers',
+    modalNuevosProyectos: 'New projects',
+    modalDisponible: '✅ Available for new projects',
+    modalSinCap: '⏸ No capacity available now',
+    modalActividades: 'Activities',
+    modalFotos: 'Photos',
+    // Loading
+    loadingDirectorio: 'Loading directory…',
+    loadingVerificando: 'Verifying credentials…',
+    loadingVerificandoAcceso: 'Verifying access…',
+    loadingTalleres: 'Loading workshops…',
+    // Errors / empty states
+    emptyNoCoincide: 'No companies match the current filters.',
+    emptyNoTalleres: 'No workshops registered at this time.',
+    errorDirectorio: 'Error loading the directory.',
+    errorConexion: 'Server connection error.',
+    errorTalleres: 'Error loading the workshops directory.',
+    // Newsletter
+    newsletterLabel: 'News channel · Asopiel',
+    newsletterTitleDefault: 'Stay up to date',
+    newsletterDescDefault: 'Subscribe to the Asopiel news channel on Telegram.',
+    newsletterTitleMarca: 'News channel for brands',
+    newsletterDescMarca: 'Luxury manufacturing trends, new manufacturers and sourcing opportunities in Ubrique.',
+    newsletterBtnMarca: 'Join · Brands Channel',
+    newsletterTitleEmpresa: 'Sector news channel',
+    newsletterDescEmpresa: 'Asopiel announcements, sector news, trade fairs and specialist training.',
+    newsletterBtnEmpresa: 'Join · Companies Channel',
+    // Talleres
+    talleresTitle: 'Specialist Workshops',
+    talleresSub: 'Private directory of auxiliary workshops. Exclusive access for assembly manufacturers.',
+    talleresPendingTitle: 'Application under review',
+    talleresPendingDesc: 'Your access request for the specialist workshops directory is being reviewed by Asopiel. You will be notified by email once approved.',
+    talleresLockedTitle: 'Restricted access',
+    talleresLockedDesc: 'As an assembly manufacturer, you can request access to the specialist workshops directory. Asopiel will review your application.',
+    talleresBtnSolicitar: 'Request access →',
+    talleresConfidencial: 'This directory is <strong>confidential</strong>. Contact details are intended exclusively for production coordination between manufacturers and workshops in the sector.',
+    talleresActividades: 'Activities',
+    talleresResponsable: 'Contact',
+    talleresTel: 'Phone',
+    talleresEmail: 'Email',
+    talleresCapacidad: 'Capacity',
+    talleresDisponible: '✅ Available',
+    talleresSinCap: '⏸ No capacity',
+    talleresErrorConexion: 'Could not verify access. Please try again.',
+    // Mapa
+    mapaFiltrarLabel: 'Filter',
+    mapaFiltroCatAll: 'All categories',
+    mapaFiltroCatFab: 'Manufacturers',
+    mapaFiltroCatTaller: 'Auxiliary workshops',
+    mapaFiltroCatProv: 'Suppliers',
+    mapaFiltroCatServ: 'Services',
+    mapaFiltroActAll: 'All activities',
+    btnLimpiarMapaFiltros: 'Clear filters',
+    mapaLegendTitle: 'Legend',
+    mapaLegendFab: 'Manufacturer',
+    mapaLegendTaller: 'Auxiliary workshop',
+    mapaLegendProv: 'Supplier',
+    mapaLegendServ: 'Services',
+    mapaEmpty: 'No companies with a registered location match the current filters.',
+    mapaCargando: 'Loading map…',
+    // Admin sidebar
+    adminSidebarTitle: 'Asopiel Panel',
+    adminNav1: 'Company applications',
+    adminNav2: 'Brand applications',
+    adminNav3: 'Active companies',
+    adminNav4: 'Workshop access',
+    adminNav5: 'Users & access',
+    // Admin sections
+    adminSolTitle: 'Registration applications — Companies',
+    adminSolSub: 'Companies that have completed the form and are awaiting validation.',
+    adminMarcasTitle: 'Access applications — Brands',
+    adminMarcasSub: 'Brands requesting access to the directory. When approving, assign visible categories and credentials are generated automatically.',
+    adminEmpresasTitle: 'Active companies',
+    adminEmpresasSub: 'All companies visible in the directory.',
+    adminTalleresTitle: 'Specialist Workshop Access',
+    adminTalleresSub: 'Assembly manufacturers requesting access to the workshops directory. Asopiel-affiliated manufacturers get automatic access; others require manual approval.',
+    adminUsuariosTitle: 'Users & access',
+    adminUsuariosSub: 'All users with access to the platform. Brands show their assigned directory permissions.',
+    // Admin table headers
+    thEmpresa: 'Company', thTipo: 'Type', thResponsable: 'Contact', thEmail: 'Email',
+    thEstado: 'Status', thAcciones: 'Actions',
+    thMarca: 'Brand', thContacto: 'Contact', thPais: 'Country', thEstado2: 'Status', thAcciones2: 'Actions',
+    thEmpresa2: 'Company', thCategoria: 'Category', thPlantilla: 'Staff', thCapacidad: 'Capacity', thAcciones3: 'Actions',
+    thEmailU: 'Email', thRol: 'Role', thEntidad: 'Entity', thPermisos: 'Permissions / Info', thEstadoU: 'Status', thAccionesU: 'Actions',
+    // Admin actions
+    adminPendiente: 'Pending',
+    adminAprobar: '✓ Approve',
+    adminRechazar: '✗ Reject',
+    adminVerFicha: 'View file',
+    adminAprobarAcceso: 'Approve access',
+    adminEditarAcceso: 'Edit access',
+    adminRevocar: 'Revoke',
+    adminVerFichaBtn: 'View file',
+    adminQuitarAsociado: 'Remove member',
+    adminMarcarAsociado: 'Mark as member',
+    adminDarBaja: 'Deactivate',
+    adminCambiarClave: 'Change password',
+    adminCapSi: '✅ Yes',
+    adminCapNo: '⏸ No',
+    // Cat labels
+    catFabricante: 'Manufacturer',
+    catTaller: 'Auxiliary workshop',
+    catAsocFab: 'Manufacturer · Asopiel',
+    catNoAsocFab: 'Manufacturer',
+    catAsocTaller: 'Aux. workshop · Asopiel',
+    catNoAsocTaller: 'Aux. workshop',
+    catAsocProv: 'Supplier · Asopiel',
+    catNoAsocProv: 'Supplier',
+    catServicios: 'Services',
+  }
+};
+
+function getCatLabel(cat) {
+  const t = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
+  const map = {
+    'fabricante': t.catFabricante,
+    'taller': t.catTaller,
+    'asociado-fabricante': t.catAsocFab,
+    'no-asociado-fabricante': t.catNoAsocFab,
+    'asociado-taller': t.catAsocTaller,
+    'no-asociado-taller': t.catNoAsocTaller,
+    'asociado-proveedor': t.catAsocProv,
+    'no-asociado-proveedor': t.catNoAsocProv,
+    'servicios': t.catServicios,
+  };
+  return map[cat] || cat;
+}
+
+function applyIntranetLang(lang) {
+  const t = INTRANET_I18N[lang] || INTRANET_I18N.es;
+  const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+  const setHtml = (id, html) => { const el = document.getElementById(id); if (el) el.innerHTML = html; };
+  const setAttr = (id, attr, val) => { const el = document.getElementById(id); if (el) el[attr] = val; };
+
+  // Nav
+  set('navDirectorio', t.navDirectorio);
+  set('navMapa', t.navMapa);
+  set('navTalleres', t.navTalleres);
+  set('navRegistro', t.navRegistro);
+  set('navAdmin', t.navAdmin);
+  set('navLogout', t.navLogout);
+
+  // Directorio header
+  set('dirTitle', t.dirTitle);
+  set('statLabelTotal', t.statLabelTotal);
+  set('statLabelFab', t.statLabelFab);
+  set('statLabelTaller', t.statLabelTaller);
+  set('statLabelProv', t.statLabelProv);
+  set('statLabelServ', t.statLabelServ);
+
+  // Search & filters
+  setAttr('searchInput', 'placeholder', t.searchPlaceholder);
+  set('filtroCatAll', t.filtroCatAll);
+  set('filtroCatFab', t.filtroCatFab);
+  set('filtroCatTaller', t.filtroCatTaller);
+  set('filtroCatProv', t.filtroCatProv);
+  set('filtroCatServ', t.filtroCatServ);
+  set('filtroActAll', t.filtroActAll);
+  set('filtroCapAll', t.filtroCapAll);
+  set('filtroCapSi', t.filtroCapSi);
+  set('filtroCapNo', t.filtroCapNo);
+  set('btnLimpiarFiltros', t.btnLimpiarFiltros);
+
+  // Talleres section
+  set('talleresTitle', t.talleresTitle);
+  set('talleresSub', t.talleresSub);
+
+  // Mapa
+  set('mapaFiltrarLabel', t.mapaFiltrarLabel);
+  set('mapaFiltroCatAll', t.mapaFiltroCatAll);
+  set('mapaFiltroCatFab', t.mapaFiltroCatFab);
+  set('mapaFiltroCatTaller', t.mapaFiltroCatTaller);
+  set('mapaFiltroCatProv', t.mapaFiltroCatProv);
+  set('mapaFiltroCatServ', t.mapaFiltroCatServ);
+  set('mapaFiltroActAll', t.mapaFiltroActAll);
+  set('btnLimpiarMapaFiltros', t.btnLimpiarMapaFiltros);
+  set('mapaLegendTitle', t.mapaLegendTitle);
+  set('mapaLegendFab', t.mapaLegendFab);
+  set('mapaLegendTaller', t.mapaLegendTaller);
+  set('mapaLegendProv', t.mapaLegendProv);
+  set('mapaLegendServ', t.mapaLegendServ);
+  set('mapaEmptyText', t.mapaEmpty);
+  set('mapaLoadingText', t.mapaCargando);
+
+  // Admin sidebar
+  set('adminSidebarTitle', t.adminSidebarTitle);
+  set('adminNav1', t.adminNav1);
+  set('adminNav2', t.adminNav2);
+  set('adminNav3', t.adminNav3);
+  set('adminNav4', t.adminNav4);
+  set('adminNav5', t.adminNav5);
+
+  // Admin section titles & subtitles
+  set('adminSolTitle', t.adminSolTitle);
+  set('adminSolSub', t.adminSolSub);
+  set('adminMarcasTitle', t.adminMarcasTitle);
+  set('adminMarcasSub', t.adminMarcasSub);
+  set('adminEmpresasTitle', t.adminEmpresasTitle);
+  set('adminEmpresasSub', t.adminEmpresasSub);
+  set('adminTalleresTitle', t.adminTalleresTitle);
+  set('adminTalleresSub', t.adminTalleresSub);
+  set('adminUsuariosTitle', t.adminUsuariosTitle);
+  set('adminUsuariosSub', t.adminUsuariosSub);
+
+  // Admin table headers
+  set('thEmpresa', t.thEmpresa); set('thTipo', t.thTipo); set('thResponsable', t.thResponsable);
+  set('thEmail', t.thEmail); set('thEstado', t.thEstado); set('thAcciones', t.thAcciones);
+  set('thMarca', t.thMarca); set('thContacto', t.thContacto); set('thPais', t.thPais);
+  set('thEstado2', t.thEstado2); set('thAcciones2', t.thAcciones2);
+  set('thEmpresa2', t.thEmpresa2); set('thCategoria', t.thCategoria); set('thPlantilla', t.thPlantilla);
+  set('thCapacidad', t.thCapacidad); set('thAcciones3', t.thAcciones3);
+  set('thEmailU', t.thEmailU); set('thRol', t.thRol); set('thEntidad', t.thEntidad);
+  set('thPermisos', t.thPermisos); set('thEstadoU', t.thEstadoU); set('thAccionesU', t.thAccionesU);
+
+  // Re-render dynamic content if data is loaded
+  if (empresasData && empresasData.length) {
+    renderEmpresas();
+  }
+}
+
 async function doLoginLanding(e) {
   e.preventDefault();
   const email = document.getElementById('lEmail').value.trim().toLowerCase();
@@ -1410,7 +1850,7 @@ async function doLoginLanding(e) {
   err.style.display = 'none';
   btn.disabled = true;
   btn.style.opacity = '0.7';
-  loading(true, currentLang === 'en' ? 'Verifying credentials…' : 'Verificando credenciales…');
+  loading(true, (INTRANET_I18N[currentLang] || INTRANET_I18N.es).loadingVerificando);
   try {
     const data = await apiFetch('/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
     if (!data.token) {
@@ -1460,12 +1900,13 @@ async function doLogin() {
   const pass = document.getElementById('loginPass').value;
   const err = document.getElementById('loginError');
   err.style.display = 'none';
-  loading(true, 'Verificando credenciales…');
+  const tl = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
+  loading(true, tl.loadingVerificando);
   try {
     const data = await apiFetch('/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
     if (!data.token) { loading(false); err.style.display = 'block'; return; }
     iniciarSesion({ token: data.token, usuario: data.user });
-  } catch(e) { loading(false); showToast('Error de conexión con el servidor.', true); }
+  } catch(e) { loading(false); showToast(tl.errorConexion, true); }
 }
 
 async function doLoginMarca() {
@@ -1473,12 +1914,13 @@ async function doLoginMarca() {
   const pass = document.getElementById('loginPassMarca').value;
   const err = document.getElementById('loginErrorMarca');
   err.style.display = 'none';
-  loading(true, 'Verificando credenciales…');
+  const tl2 = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
+  loading(true, tl2.loadingVerificando);
   try {
     const data = await apiFetch('/login', { method: 'POST', body: JSON.stringify({ email, password: pass }) });
     if (!data.token) { loading(false); err.style.display = 'block'; return; }
     iniciarSesion({ token: data.token, usuario: data.user });
-  } catch(e) { loading(false); showToast('Error de conexión con el servidor.', true); }
+  } catch(e) { loading(false); showToast(tl2.errorConexion, true); }
 }
 
 function iniciarSesion(data) {
@@ -1489,7 +1931,10 @@ function iniciarSesion(data) {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appMain').style.display = 'block';
   document.getElementById('userDisplayName').textContent = currentUser.nombre;
-  const roles = { admin: 'Administrador Asopiel', empresa: 'Empresa del sector', marca: 'Acceso marca', consulta: 'Acceso consulta' };
+  // Apply intranet language first so role label is in the right language
+  applyIntranetLang(currentLang);
+  const t = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
+  const roles = { admin: t.roleAdmin, empresa: t.roleEmpresa, marca: t.roleMarca, consulta: t.roleConsulta };
   document.getElementById('userDisplayRole').textContent = roles[currentUser.role] || currentUser.role;
   // Mostrar nav según rol
   document.getElementById('navAdmin').style.display = currentUser.role === 'admin' ? '' : 'none';
@@ -1501,8 +1946,8 @@ function iniciarSesion(data) {
   document.getElementById('navTalleres').style.display = (esFabricante || currentUser.role === 'admin') ? '' : 'none';
   // Subtítulo directorio para marca
   if (currentUser.role === 'marca' && currentUser.permisos) {
-    const cats = { 'fabricante': 'Fabricantes', 'taller': 'Talleres auxiliares', 'proveedor': 'Proveedores', 'servicios': 'Servicios' };
-    document.getElementById('dirSubtitle').textContent = 'Acceso a: ' + currentUser.permisos.map(p => cats[p] || p).join(' · ');
+    const catNames = { 'fabricante': t.filtroCatFab, 'taller': t.filtroCatTaller, 'proveedor': t.filtroCatProv, 'servicios': t.filtroCatServ };
+    document.getElementById('dirSubtitle').textContent = t.dirAccesoPrefix + currentUser.permisos.map(p => catNames[p] || p).join(' · ');
   }
   cargarDirectorio();
   mostrarNewsletter();
@@ -1601,7 +2046,8 @@ function showAdminSection(sec, el) {
 
 // ── Directorio ────────────────────────────────────────────────────────────────
 async function cargarDirectorio() {
-  loading(true, 'Cargando directorio…');
+  const td = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
+  loading(true, td.loadingDirectorio);
   try {
     const data = await apiFetch('/empresas');
     loading(false);
@@ -1619,7 +2065,7 @@ async function cargarDirectorio() {
     updateStats();
     populateActividadesFilter();
     renderEmpresas();
-  } catch(e) { loading(false); showToast('Error al cargar el directorio.', true); }
+  } catch(e) { loading(false); showToast(td.errorDirectorio, true); }
 }
 
 function updateStats() {
@@ -1693,7 +2139,8 @@ function renderEmpresas() {
     return true;
   });
   const grid = document.getElementById('empresasGrid');
-  if (!f.length) { grid.innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div><p>No hay empresas que coincidan con los filtros.</p></div>'; return; }
+  const t = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
+  if (!f.length) { grid.innerHTML = `<div class="empty-state"><div class="empty-icon">🔍</div><p>${t.emptyNoCoincide}</p></div>`; return; }
   grid.innerHTML = f.map(e => {
     const acts = (e.actividades || []).slice(0, 3).map(a => `<span class="act-tag">${a}</span>`).join('') + ((e.actividades||[]).length > 3 ? `<span class="act-tag">+${(e.actividades||[]).length - 3}</span>` : '');
     const logoHtml = (e._images && e._images.logo)
@@ -1704,20 +2151,20 @@ function renderEmpresas() {
         ${logoHtml}
         <div class="ficha-meta">
           <div class="ficha-nombre">${e.razon}</div>
-          <span class="ficha-tipo ${CAT_BADGE[e.categoria] || 'badge-serv'}">${CAT_LABEL[e.categoria] || e.categoria}</span>
+          <span class="ficha-tipo ${CAT_BADGE[e.categoria] || 'badge-serv'}">${getCatLabel(e.categoria)}</span>
         </div>
       </div>
       <div class="ficha-body">
         <div class="ficha-actividades">${acts}</div>
         <div class="ficha-datos">
-          <div class="dato-row"><span>Ubicación</span><span>${(e.dir||'').split(',').slice(-1)[0].trim()}</span></div>
-          <div class="dato-row"><span>Plantilla</span><span>${e.trab_total} personas (${e.trab_prod} prod.)</span></div>
-          <div class="dato-row"><span>Capacidad</span><span>${e.capacidad === 'Sí' ? '✅ Acepta nuevos proyectos' : '⏸ Sin capacidad ahora'}</span></div>
+          <div class="dato-row"><span>${t.cardUbicacion}</span><span>${(e.dir||'').split(',').slice(-1)[0].trim()}</span></div>
+          <div class="dato-row"><span>${t.cardPlantilla}</span><span>${e.trab_total} ${t.cardPersonas} (${e.trab_prod} ${t.cardProd})</span></div>
+          <div class="dato-row"><span>${t.cardCapacidad}</span><span>${e.capacidad === 'Sí' ? t.cardAcepta : t.cardSinCap}</span></div>
         </div>
       </div>
       <div class="ficha-footer">
-        <button class="btn-ficha" onclick="event.stopPropagation();showContact('${e.id}')">Contactar</button>
-        <button class="btn-ficha primary" onclick="event.stopPropagation();openModal('${e.id}')">Ver ficha</button>
+        <button class="btn-ficha" onclick="event.stopPropagation();showContact('${e.id}')">${t.btnContactar}</button>
+        <button class="btn-ficha primary" onclick="event.stopPropagation();openModal('${e.id}')">${t.btnVerFicha}</button>
       </div>
     </div>`;
   }).join('');
@@ -1746,15 +2193,16 @@ function openModal(id) {
   }
   document.getElementById('modalNombre').textContent = e.razon;
   const b = document.getElementById('modalCategoriaBadge');
-  b.textContent = CAT_LABEL[e.categoria] || e.categoria;
+  b.textContent = getCatLabel(e.categoria);
   b.className = 'ficha-tipo ' + (CAT_BADGE[e.categoria] || 'badge-serv');
 
   // Galería de fotos (solo si hay alguna)
   const imgs = e._images || {};
   const fotoSlots = ['foto-1', 'foto-2', 'foto-3'].filter(s => imgs[s]);
+  const tm = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
   const galeriaHtml = fotoSlots.length ? `
     <div class="modal-section">
-      <p class="modal-section-title">Fotografías</p>
+      <p class="modal-section-title">${tm.modalFotos}</p>
       <div class="foto-galeria">
         ${fotoSlots.map(s => `<div class="foto-galeria-item"><img src="${imgs[s]}" alt="Foto" loading="lazy"></div>`).join('')}
       </div>
@@ -1764,23 +2212,23 @@ function openModal(id) {
   const uploadHtml = esAdmin ? buildUploadBlock(e) : '';
 
   document.getElementById('modalBody').innerHTML = `
-    <div class="modal-section"><p class="modal-section-title">Contacto</p>
+    <div class="modal-section"><p class="modal-section-title">${tm.modalContacto}</p>
       <div class="modal-dato-grid">
-        <div class="modal-dato"><span class="modal-dato-label">Responsable</span><span class="modal-dato-val">${e.responsable}</span></div>
-        <div class="modal-dato"><span class="modal-dato-label">Teléfono</span><span class="modal-dato-val"><a href="tel:${e.tel}" style="color:var(--verde)">${e.tel}</a></span></div>
-        <div class="modal-dato full"><span class="modal-dato-label">Email</span><span class="modal-dato-val"><a href="mailto:${e.email}" style="color:var(--verde)">${e.email}</a></span></div>
-        <div class="modal-dato full"><span class="modal-dato-label">Dirección</span><span class="modal-dato-val">${e.dir}</span></div>
-        ${e.web ? `<div class="modal-dato full"><span class="modal-dato-label">Web</span><span class="modal-dato-val"><a href="${e.web}" target="_blank" style="color:var(--verde)">${e.web}</a></span></div>` : ''}
+        <div class="modal-dato"><span class="modal-dato-label">${tm.modalResponsable}</span><span class="modal-dato-val">${e.responsable}</span></div>
+        <div class="modal-dato"><span class="modal-dato-label">${tm.modalTel}</span><span class="modal-dato-val"><a href="tel:${e.tel}" style="color:var(--verde)">${e.tel}</a></span></div>
+        <div class="modal-dato full"><span class="modal-dato-label">${tm.modalEmail}</span><span class="modal-dato-val"><a href="mailto:${e.email}" style="color:var(--verde)">${e.email}</a></span></div>
+        <div class="modal-dato full"><span class="modal-dato-label">${tm.modalDir}</span><span class="modal-dato-val">${e.dir}</span></div>
+        ${e.web ? `<div class="modal-dato full"><span class="modal-dato-label">${tm.modalWeb}</span><span class="modal-dato-val"><a href="${e.web}" target="_blank" style="color:var(--verde)">${e.web}</a></span></div>` : ''}
       </div>
     </div>
-    <div class="modal-section"><p class="modal-section-title">Equipo y capacidad</p>
+    <div class="modal-section"><p class="modal-section-title">${tm.modalEquipo}</p>
       <div class="modal-dato-grid">
-        <div class="modal-dato"><span class="modal-dato-label">Trabajadores producción</span><span class="modal-dato-val">${e.trab_prod}</span></div>
-        <div class="modal-dato"><span class="modal-dato-label">Trabajadores totales</span><span class="modal-dato-val">${e.trab_total}</span></div>
-        <div class="modal-dato full"><span class="modal-dato-label">Nuevos proyectos</span><span class="modal-dato-val">${e.capacidad === 'Sí' ? '✅ Disponible para nuevos proyectos' : '⏸ Sin capacidad disponible ahora'}</span></div>
+        <div class="modal-dato"><span class="modal-dato-label">${tm.modalTrabProd}</span><span class="modal-dato-val">${e.trab_prod}</span></div>
+        <div class="modal-dato"><span class="modal-dato-label">${tm.modalTrabTotal}</span><span class="modal-dato-val">${e.trab_total}</span></div>
+        <div class="modal-dato full"><span class="modal-dato-label">${tm.modalNuevosProyectos}</span><span class="modal-dato-val">${e.capacidad === 'Sí' ? tm.modalDisponible : tm.modalSinCap}</span></div>
       </div>
     </div>
-    <div class="modal-section"><p class="modal-section-title">Actividades</p>
+    <div class="modal-section"><p class="modal-section-title">${tm.modalActividades}</p>
       <div style="display:flex;flex-wrap:wrap;gap:7px">${(e.actividades||[]).map(a => `<span class="act-tag" style="font-size:12px;padding:5px 10px">${a}</span>`).join('')}</div>
     </div>
     ${galeriaHtml}
@@ -2066,7 +2514,7 @@ const MARCA_I18N = {
 
 let marcaLang = 'es';
 
-function setLang(lang, btn) {
+function setLangMarca(lang, btn) {
   marcaLang = lang;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
@@ -2193,21 +2641,22 @@ async function submitRegistroMarca() {
 
 // ── Admin: solicitudes empresa ────────────────────────────────────────────────
 async function cargarSolicitudes() {
+  const ta = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
   try {
     const data = await apiFetch('/admin/pending');
     const pending = Array.isArray(data) ? data : (data.data || []);
     const tbody = document.getElementById('tablaSolicitudes');
-    if (!pending.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:32px">No hay solicitudes pendientes.</td></tr>'; return; }
+    if (!pending.length) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:32px">${ta.adminPendiente === 'Pending' ? 'No pending applications.' : 'No hay solicitudes pendientes.'}</td></tr>`; return; }
     tbody.innerHTML = pending.map(s => `
       <tr>
         <td><strong>${s.razon}</strong></td>
-        <td><span class="badge" style="background:var(--verde-pale);color:var(--verde)">${CAT_LABEL[s.categoria] || s.categoria || '—'}</span></td>
+        <td><span class="badge" style="background:var(--verde-pale);color:var(--verde)">${getCatLabel(s.categoria || '—')}</span></td>
         <td>${s.responsable || '—'}</td>
         <td style="font-size:11px;color:var(--ink-mid)">${s.email}</td>
-        <td><span class="badge badge-pendiente">Pendiente</span></td>
+        <td><span class="badge badge-pendiente">${ta.adminPendiente}</span></td>
         <td><div class="admin-actions">
-          <button class="btn-admin success" onclick="aprobarSolicitud('${s.id}')">✓ Aprobar</button>
-          <button class="btn-admin danger" onclick="rechazarSolicitud('${s.id}')">✗ Rechazar</button>
+          <button class="btn-admin success" onclick="aprobarSolicitud('${s.id}')">${ta.adminAprobar}</button>
+          <button class="btn-admin danger" onclick="rechazarSolicitud('${s.id}')">${ta.adminRechazar}</button>
         </div></td>
       </tr>`).join('');
   } catch(e) { console.error(e); }
@@ -2238,11 +2687,12 @@ async function rechazarSolicitud(id) {
 // ── Admin: marcas ─────────────────────────────────────────────────────────────
 let _marcasCache = [];
 async function cargarMarcas() {
+  const tam = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
   try {
     const data = await apiFetch('/marcas');
     _marcasCache = Array.isArray(data) ? data : (data.data || []);
     const tbody = document.getElementById('tablaMarcas');
-    if (!_marcasCache.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">No hay solicitudes de marcas.</td></tr>'; return; }
+    if (!_marcasCache.length) { tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--ink-soft);padding:32px">${tam.adminPendiente === 'Pending' ? 'No brand applications.' : 'No hay solicitudes de marcas.'}</td></tr>`; return; }
     tbody.innerHTML = _marcasCache.map(s => `
       <tr>
         <td><strong>${s.marca}</strong></td>
@@ -2250,10 +2700,10 @@ async function cargarMarcas() {
         <td>${s.pais || '—'}</td>
         <td><span class="badge badge-${s.estado === 'pendiente' ? 'pendiente' : s.estado === 'aprobada' ? 'activo' : 'revocado'}">${s.estado}</span></td>
         <td><div class="admin-actions">
-          ${s.ficha ? `<button class="btn-admin" onclick="abrirFichaMarca('${s.id}', this)" style="background:var(--verde-pale);color:var(--verde)">Ver ficha</button>` : ''}
-          ${s.estado === 'pendiente' ? `<button class="btn-admin success" onclick="abrirAprobarMarca('${s.id}','${s.marca}')">Aprobar acceso</button>` : ''}
-          ${s.estado === 'aprobada' ? `<button class="btn-admin" onclick="abrirEditarPermisos('${s.id}','${s.marca}')">Editar acceso</button>` : ''}
-          ${s.estado === 'aprobada' ? `<button class="btn-admin danger" onclick="abrirRevocar('${s.id}','${s.marca}','${s.email}')">Revocar</button>` : ''}
+          ${s.ficha ? `<button class="btn-admin" onclick="abrirFichaMarca('${s.id}', this)" style="background:var(--verde-pale);color:var(--verde)">${tam.adminVerFichaBtn}</button>` : ''}
+          ${s.estado === 'pendiente' ? `<button class="btn-admin success" onclick="abrirAprobarMarca('${s.id}','${s.marca}')">${tam.adminAprobarAcceso}</button>` : ''}
+          ${s.estado === 'aprobada' ? `<button class="btn-admin" onclick="abrirEditarPermisos('${s.id}','${s.marca}')">${tam.adminEditarAcceso}</button>` : ''}
+          ${s.estado === 'aprobada' ? `<button class="btn-admin danger" onclick="abrirRevocar('${s.id}','${s.marca}','${s.email}')">${tam.adminRevocar}</button>` : ''}
         </div></td>
       </tr>`).join('');
   } catch(e) { console.error(e); }
@@ -2446,6 +2896,7 @@ async function toggleAsociado(id, valor) {
 }
 
 async function cargarAdminEmpresas() {
+  const tae = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
   try {
     const data = await apiFetch('/empresas');
     const empresas = Array.isArray(data) ? data : (data.data || []);
@@ -2453,13 +2904,13 @@ async function cargarAdminEmpresas() {
     tbody.innerHTML = empresas.map(e => `
       <tr>
         <td><strong>${e.razon}</strong></td>
-        <td><span class="badge" style="background:var(--verde-pale);color:var(--verde);font-size:9px">${CAT_LABEL[e.categoria] || e.categoria}</span></td>
-        <td>${e.trab_total} (${e.trab_prod} prod.)</td>
-        <td>${e.capacidad === 'Sí' ? '✅ Sí' : '⏸ No'}</td>
+        <td><span class="badge" style="background:var(--verde-pale);color:var(--verde);font-size:9px">${getCatLabel(e.categoria)}</span></td>
+        <td>${e.trab_total} (${e.trab_prod} ${tae.cardProd})</td>
+        <td>${e.capacidad === 'Sí' ? tae.adminCapSi : tae.adminCapNo}</td>
         <td><div class="admin-actions">
-          <button class="btn-admin" onclick="openModal('${e.id}')">Ver ficha</button>
-          <button class="btn-admin" onclick="toggleAsociado('${e.id}', ${!e.asociado})">${e.asociado ? 'Quitar asociado' : 'Marcar asociado'}</button>
-          <button class="btn-admin danger" onclick="darDeBaja('${e.id}')">Dar de baja</button>
+          <button class="btn-admin" onclick="openModal('${e.id}')">${tae.adminVerFichaBtn}</button>
+          <button class="btn-admin" onclick="toggleAsociado('${e.id}', ${!e.asociado})">${e.asociado ? tae.adminQuitarAsociado : tae.adminMarcarAsociado}</button>
+          <button class="btn-admin danger" onclick="darDeBaja('${e.id}')">${tae.adminDarBaja}</button>
         </div></td>
       </tr>`).join('');
   } catch(e) { console.error(e); }
@@ -2477,11 +2928,12 @@ async function darDeBaja(id) {
 
 // ── Admin: usuarios ───────────────────────────────────────────────────────────
 async function cargarUsuarios() {
+  const tau = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
   try {
     const data = await apiFetch('/usuarios');
     if (!data.ok) return;
-    const cats = { 'asociado-fabricante': 'Fab.Asopiel', 'no-asociado-fabricante': 'Fabricante', 'asociado-taller': 'Taller Asopiel', 'no-asociado-taller': 'Taller', 'asociado-proveedor': 'Prov.Asopiel', 'no-asociado-proveedor': 'Proveedor', 'servicios': 'Servicios' };
-    const roles = { admin: 'Admin', empresa: 'Empresa', marca: 'Marca', consulta: 'Consulta' };
+    const cats = { 'asociado-fabricante': tau.catAsocFab, 'no-asociado-fabricante': tau.catNoAsocFab, 'asociado-taller': tau.catAsocTaller, 'no-asociado-taller': tau.catNoAsocTaller, 'asociado-proveedor': tau.catAsocProv, 'no-asociado-proveedor': tau.catNoAsocProv, 'servicios': tau.catServicios };
+    const roles = { admin: 'Admin', empresa: tau.roleEmpresa, marca: tau.roleMarca, consulta: tau.roleConsulta };
     const tbody = document.getElementById('tablaUsuarios');
     tbody.innerHTML = data.data.map(u => `
       <tr>
@@ -2491,8 +2943,8 @@ async function cargarUsuarios() {
         <td style="font-size:11px;color:var(--ink-mid)">${u.rol === 'marca' && u.permisos ? u.permisos.map(p => cats[p] || p).join(', ') : '—'}</td>
         <td><span class="badge badge-${u.estado === 'activo' ? 'activo' : 'revocado'}">${u.estado}</span></td>
         <td><div class="admin-actions">
-          ${u.estado === 'activo' && u.rol !== 'admin' ? `<button class="btn-admin" onclick="cambiarClaveUsuario('${u.email}','${u.entidad || u.email}')">Cambiar clave</button>` : ''}
-          ${u.estado === 'activo' && u.rol !== 'admin' ? `<button class="btn-admin danger" onclick="abrirRevocarUsuario('${u.id}','${u.entidad || u.email}','${u.email}')">Revocar</button>` : ''}
+          ${u.estado === 'activo' && u.rol !== 'admin' ? `<button class="btn-admin" onclick="cambiarClaveUsuario('${u.email}','${u.entidad || u.email}')">${tau.adminCambiarClave}</button>` : ''}
+          ${u.estado === 'activo' && u.rol !== 'admin' ? `<button class="btn-admin danger" onclick="abrirRevocarUsuario('${u.id}','${u.entidad || u.email}','${u.email}')">${tau.adminRevocar}</button>` : ''}
         </div></td>
       </tr>`).join('');
   } catch(e) { console.error(e); }
@@ -2564,18 +3016,19 @@ function mostrarNewsletter() {
   const btn     = document.getElementById('newsletterBtn');
   const btnTxt  = document.getElementById('newsletterBtnText');
 
+  const tn = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
   if (esMarca) {
     icon.textContent   = '🏷️';
-    title.textContent  = 'Canal de noticias para marcas';
-    desc.textContent   = 'Tendencias en fabricación de lujo, nuevos fabricantes adheridos y oportunidades de sourcing en Ubrique.';
+    title.textContent  = tn.newsletterTitleMarca;
+    desc.textContent   = tn.newsletterDescMarca;
     btn.href           = 'https://t.me/asopielubrique_marcas';
-    btnTxt.textContent = 'Unirse · Canal Marcas';
+    btnTxt.textContent = tn.newsletterBtnMarca;
   } else {
     icon.textContent   = '🏭';
-    title.textContent  = 'Canal de noticias del sector';
-    desc.textContent   = 'Convocatorias de Asopiel, novedades del sector, ferias y formación especializada.';
+    title.textContent  = tn.newsletterTitleEmpresa;
+    desc.textContent   = tn.newsletterDescEmpresa;
     btn.href           = 'https://t.me/asopielubrique_empresas';
-    btnTxt.textContent = 'Unirse · Canal Empresas';
+    btnTxt.textContent = tn.newsletterBtnEmpresa;
   }
 
   banner.style.display = '';
@@ -2599,7 +3052,8 @@ async function cargarVistaTalleres() {
     return;
   }
   // Comprobar si el fabricante tiene acceso
-  loading(true, 'Verificando acceso…');
+  const tt = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
+  loading(true, tt.loadingVerificandoAcceso);
   try {
     const data = await apiFetch('/talleres/acceso');
     loading(false);
@@ -2611,53 +3065,46 @@ async function cargarVistaTalleres() {
         <div class="talleres-grid">
           <div class="pending-access">
             <div class="pending-icon">⏳</div>
-            <h3>Solicitud en revisión</h3>
-            <p>Tu solicitud de acceso al directorio de talleres especializados está siendo revisada por Asopiel. Recibirás notificación por email cuando sea autorizada.</p>
+            <h3>${tt.talleresPendingTitle}</h3>
+            <p>${tt.talleresPendingDesc}</p>
           </div>
         </div>`;
     } else {
-      // Sin solicitud — mostrar banner de solicitud
-      const esAsopiel = false; // mismo flujo para todos: la intranet no distingue asociados
       contenedor.innerHTML = `
         <div class="talleres-info-banner">
-          <span>${esAsopiel ? '✅' : 'ℹ️'}</span>
-          <p>${esAsopiel
-            ? '<strong>Como fabricante adherido a Asopiel</strong>, tienes acceso automático al directorio de talleres especializados. Haz clic para activar tu acceso.'
-            : 'El acceso al directorio de talleres especializados está sujeto a <strong>autorización por parte de Asopiel</strong>. Solicita acceso y recibirás respuesta por email.'
-          }</p>
+          <span>ℹ️</span>
+          <p>${tt.talleresLockedDesc}</p>
         </div>
         <div class="talleres-grid">
           <div class="pending-access">
             <div class="pending-icon">🔒</div>
-            <h3>${esAsopiel ? 'Directorio de Talleres Especializados' : 'Acceso restringido'}</h3>
-            <p>${esAsopiel
-              ? 'Activa tu acceso para consultar el directorio privado de talleres auxiliares del sector.'
-              : 'Como fabricante montador, puedes solicitar acceso al directorio de talleres especializados. Asopiel revisará tu solicitud.'
-            }</p>
-            <button class="btn-solicitar-acceso" onclick="solicitarAccesoTalleres()">${esAsopiel ? 'Activar acceso →' : 'Solicitar acceso →'}</button>
+            <h3>${tt.talleresLockedTitle}</h3>
+            <p>${tt.talleresLockedDesc}</p>
+            <button class="btn-solicitar-acceso" onclick="solicitarAccesoTalleres()">${tt.talleresBtnSolicitar}</button>
           </div>
         </div>`;
     }
   } catch(e) {
     loading(false);
-    contenedor.innerHTML = `<div class="talleres-grid"><div class="pending-access"><div class="pending-icon">⚠️</div><h3>Error de conexión</h3><p>No se pudo verificar el acceso. Inténtalo de nuevo.</p></div></div>`;
+    contenedor.innerHTML = `<div class="talleres-grid"><div class="pending-access"><div class="pending-icon">⚠️</div><h3>Error</h3><p>${(INTRANET_I18N[currentLang]||INTRANET_I18N.es).talleresErrorConexion}</p></div></div>`;
   }
 }
 
 async function renderTalleresDirectorio(contenedor, esAdmin) {
-  loading(true, 'Cargando talleres…');
+  const tr = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
+  loading(true, tr.loadingTalleres);
   try {
     const data = await apiFetch('/talleres');
     loading(false);
     if (!data.ok || !data.data.length) {
-      contenedor.innerHTML = `<div class="empty-state"><div class="empty-icon">🔧</div><p>No hay talleres registrados en este momento.</p></div>`;
+      contenedor.innerHTML = `<div class="empty-state"><div class="empty-icon">🔧</div><p>${tr.emptyNoTalleres}</p></div>`;
       return;
     }
     const talleres = data.data;
     contenedor.innerHTML = `
       <div class="talleres-info-banner" style="margin-bottom:20px">
         <span>🔒</span>
-        <p>Este directorio es <strong>confidencial</strong>. La información de contacto está destinada exclusivamente a la coordinación de producción entre fabricantes y talleres adheridos al sector.</p>
+        <p>${tr.talleresConfidencial}</p>
       </div>
       <div class="talleres-grid">
         ${talleres.map(t => `
@@ -2666,23 +3113,23 @@ async function renderTalleresDirectorio(contenedor, esAdmin) {
               <div class="taller-avatar">${t.razon.charAt(0)}</div>
               <div>
                 <div class="taller-nombre">${t.razon}</div>
-                <span class="ficha-tipo badge-aux">${CAT_LABEL[t.categoria] || t.categoria}</span>
+                <span class="ficha-tipo badge-aux">${getCatLabel(t.categoria)}</span>
               </div>
             </div>
             <div class="taller-ficha-body">
               <div class="ficha-datos">
-                ${(t.actividades||[]).length ? `<div class="dato-row"><span>Actividades</span><span>${(t.actividades||[]).join(', ')}</span></div>` : ''}
-                <div class="dato-row"><span>Responsable</span><span>${t.responsable || '—'}</span></div>
-                <div class="dato-row"><span>Teléfono</span><span><a href="tel:${t.tel}" style="color:var(--verde)">${t.tel || '—'}</a></span></div>
-                <div class="dato-row"><span>Email</span><span><a href="mailto:${t.email}" style="color:var(--verde);font-size:11px">${t.email || '—'}</a></span></div>
-                <div class="dato-row"><span>Capacidad</span><span>${t.capacidad === 'Sí' ? '✅ Disponible' : '⏸ Sin capacidad'}</span></div>
+                ${(t.actividades||[]).length ? `<div class="dato-row"><span>${tr.talleresActividades}</span><span>${(t.actividades||[]).join(', ')}</span></div>` : ''}
+                <div class="dato-row"><span>${tr.talleresResponsable}</span><span>${t.responsable || '—'}</span></div>
+                <div class="dato-row"><span>${tr.talleresTel}</span><span><a href="tel:${t.tel}" style="color:var(--verde)">${t.tel || '—'}</a></span></div>
+                <div class="dato-row"><span>${tr.talleresEmail}</span><span><a href="mailto:${t.email}" style="color:var(--verde);font-size:11px">${t.email || '—'}</a></span></div>
+                <div class="dato-row"><span>${tr.talleresCapacidad}</span><span>${t.capacidad === 'Sí' ? tr.talleresDisponible : tr.talleresSinCap}</span></div>
               </div>
             </div>
           </div>`).join('')}
       </div>`;
   } catch(e) {
     loading(false);
-    showToast('Error al cargar el directorio de talleres.', true);
+    showToast(tr.errorTalleres, true);
   }
 }
 
@@ -2905,9 +3352,9 @@ function renderMapa() {
     const popupHtml = `
       <div class="mapa-popup">
         <div class="mapa-popup-nombre">${e.razon}</div>
-        <span class="mapa-popup-cat ${CAT_BADGE[e.categoria] || 'badge-serv'}">${CAT_LABEL[e.categoria] || e.categoria}</span>
+        <span class="mapa-popup-cat ${CAT_BADGE[e.categoria] || 'badge-serv'}">${getCatLabel(e.categoria)}</span>
         ${acts ? `<div class="mapa-popup-acts">${acts}</div>` : ''}
-        <button class="mapa-popup-btn" onclick="openModal('${e.id}')">Ver ficha completa</button>
+        <button class="mapa-popup-btn" onclick="openModal('${e.id}')">${(INTRANET_I18N[currentLang]||INTRANET_I18N.es).btnVerFicha}</button>
       </div>`;
     const marker = L.marker([e.lat, e.lng], { icon: crearIconoMapa(e.categoria) })
       .addTo(mapaInstance)
