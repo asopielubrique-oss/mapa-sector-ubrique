@@ -386,7 +386,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .lpanel-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #5CD68A; }
 .lform-error { background: #FDECEA; color: #7B2D2D; padding: 8px 12px; border-radius: var(--radius); font-size: 12px; margin-bottom: 10px; display: none; }
 /* Selector idioma sobre la landing nueva */
-.lang-switcher { position: fixed; top: 16px; right: 16px; z-index: 100; display: flex; gap: 4px; background: var(--ink); border: 1px solid rgba(255,255,255,.12); border-radius: 20px; padding: 4px; }
+.lang-switcher { position: fixed; top: 16px; right: 24px; z-index: 100; display: flex; gap: 4px; background: var(--ink); border: 1px solid rgba(255,255,255,.12); border-radius: 20px; padding: 4px; }
 .lang-switcher .lang-btn { background: transparent; border: none; font-family: var(--font); font-size: 10px; font-weight: 700; color: rgba(255,255,255,.55); padding: 4px 10px; border-radius: 14px; cursor: pointer; transition: all .15s; letter-spacing: .06em; }
 .lang-switcher .lang-btn:hover { color: white; background: rgba(255,255,255,.1); }
 .lang-switcher .lang-btn.active { background: #5CD68A; color: var(--ink); }
@@ -495,13 +495,14 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 </head>
 <body>
 
+<!-- Selector de idioma (fixed, fuera de cualquier contenedor con overflow) -->
+<div class="lang-switcher" id="langSwitcher">
+  <button class="lang-btn active" onclick="setLang('es',this)">ES</button>
+  <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+</div>
+
 <!-- LANDING PAGE -->
 <div id="landingScreen">
-  <!-- Selector de idioma -->
-  <div class="lang-switcher" id="langSwitcher">
-    <button class="lang-btn active" onclick="setLang('es',this)">ES</button>
-    <button class="lang-btn" onclick="setLang('en',this)">EN</button>
-  </div>
 
   <div class="landing-nueva">
 
@@ -1959,7 +1960,7 @@ function iniciarSesion(data) {
   loading(false);
   currentUser = data.usuario;
   authToken = data.token;
-  document.getElementById('landingScreen').style.display = 'none';
+  document.getElementById('landingScreen').style.display = 'none'; document.getElementById('langSwitcher').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appMain').style.display = 'block';
   document.getElementById('userDisplayName').textContent = currentUser.nombre;
@@ -1988,7 +1989,7 @@ function iniciarSesion(data) {
 
 function doLogout() {
   currentUser = null; authToken = null; empresasData = [];
-  document.getElementById('landingScreen').style.display = '';
+  document.getElementById('landingScreen').style.display = ''; document.getElementById('langSwitcher').style.display = '';
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appMain').style.display = 'none';
   document.getElementById('loginUser').value = '';
@@ -2017,12 +2018,12 @@ function copiarEmailAsopiel(btn) {
 }
 
 function irALogin() {
-  document.getElementById('landingScreen').style.display = 'none';
+  document.getElementById('landingScreen').style.display = 'none'; document.getElementById('langSwitcher').style.display = 'none';
   document.getElementById('loginScreen').style.display = '';
 }
 
 function irARegistroMarca() {
-  document.getElementById('landingScreen').style.display = 'none';
+  document.getElementById('landingScreen').style.display = 'none'; document.getElementById('langSwitcher').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appMain').style.display = 'block';
   document.getElementById('headerNav').style.display = 'none';
@@ -2030,7 +2031,7 @@ function irARegistroMarca() {
 }
 
 function irARegistroEmpresa() {
-  document.getElementById('landingScreen').style.display = 'none';
+  document.getElementById('landingScreen').style.display = 'none'; document.getElementById('langSwitcher').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('appMain').style.display = 'block';
   document.getElementById('headerNav').style.display = 'none';
@@ -2053,7 +2054,7 @@ function showView(viewId, btn) {
   if (btn) btn.classList.add('active');
   // Si no hay sesión y se pide registroMarca, mostrar vista sin login
   if (viewId === 'registroMarca' && !currentUser) {
-    document.getElementById('landingScreen').style.display = 'none';
+    document.getElementById('landingScreen').style.display = 'none'; document.getElementById('langSwitcher').style.display = 'none';
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('appMain').style.display = 'block';
     document.getElementById('headerNav').style.display = 'none';
@@ -2508,7 +2509,7 @@ async function submitFormEmpresa() {
       } else {
         document.getElementById('appMain').style.display = 'none';
         document.getElementById('headerNav').style.display = '';
-        document.getElementById('landingScreen').style.display = '';
+        document.getElementById('landingScreen').style.display = ''; document.getElementById('langSwitcher').style.display = '';
       }
     } else { showToast('Error al enviar la solicitud.', true); }
   } catch(e) { loading(false); showToast('Error de conexión.', true); }
@@ -2763,7 +2764,7 @@ async function submitRegistroMarca() {
       marcaPrevStep();
       document.getElementById('appMain').style.display = 'none';
       document.getElementById('headerNav').style.display = '';
-      document.getElementById('landingScreen').style.display = '';
+      document.getElementById('landingScreen').style.display = ''; document.getElementById('langSwitcher').style.display = '';
     } else { showToast(t.toastError, true); }
   } catch(e) { loading(false); showToast('Error de conexión.', true); }
 }
