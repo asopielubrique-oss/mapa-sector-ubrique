@@ -180,6 +180,20 @@ body { font-family: var(--font); background: var(--bg); color: var(--ink); min-h
 .img-slot.has-img .img-slot-del { display: flex; }
 .img-upload-progress { height: 3px; background: var(--verde-pale); border-radius: 2px; margin-top: 6px; overflow: hidden; display: none; }
 .img-upload-progress-bar { height: 100%; background: var(--verde); width: 0%; transition: width 0.3s; }
+.info-editor { margin-top: 12px; }
+.info-editor textarea { width: 100%; box-sizing: border-box; border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; font-size: 13px; font-family: var(--font); color: var(--ink); background: var(--bg); resize: vertical; min-height: 80px; outline: none; transition: border-color 0.2s; }
+.info-editor textarea:focus { border-color: var(--verde); }
+.esp-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); min-height: 38px; cursor: text; transition: border-color 0.2s; }
+.esp-chips:focus-within { border-color: var(--verde); }
+.esp-chip { display: flex; align-items: center; gap: 4px; background: var(--verde-pale); color: var(--verde); font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 2px; }
+.esp-chip-del { cursor: pointer; font-size: 13px; line-height: 1; color: var(--verde); background: none; border: none; padding: 0; }
+.esp-chip-del:hover { color: var(--ink); }
+.esp-input { border: none; outline: none; font-size: 12px; font-family: var(--font); color: var(--ink); background: transparent; min-width: 120px; flex: 1; padding: 2px 0; }
+.info-save-row { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.btn-info-save { background: var(--verde); color: white; border: none; border-radius: var(--radius); padding: 7px 18px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: var(--font); transition: opacity 0.2s; }
+.btn-info-save:hover { opacity: 0.85; }
+.btn-info-save:disabled { opacity: 0.5; cursor: default; }
+.info-save-status { font-size: 12px; color: var(--ink-soft); }
 .cat-asociado-fabricante { background: #1A3D2E; }
 .cat-no-asociado-fabricante { background: #2B6B4A; }
 .cat-auxiliar { background: #2E5E47; }
@@ -1461,8 +1475,17 @@ const INTRANET_I18N = {
     modalNuevosProyectos: 'Nuevos proyectos',
     modalDisponible: '✅ Disponible para nuevos proyectos',
     modalSinCap: '⏸ Sin capacidad disponible ahora',
+    modalDescripcion: 'Sobre la empresa',
+    modalEspecialidades: 'Especialidades',
     modalActividades: 'Actividades',
     modalFotos: 'Fotografías',
+    adminEditarInfo: '✏️ Descripción y especialidades (admin)',
+    adminGuardarInfo: 'Guardar',
+    adminGuardandoInfo: 'Guardando…',
+    adminInfoGuardada: '✓ Guardado',
+    adminInfoError: 'Error al guardar',
+    adminEspPlaceholder: 'Escribe una especialidad y pulsa Enter o coma',
+    adminDescPlaceholder: 'Descripción de la empresa, proceso productivo, capacidades…',
     // Loading
     loadingDirectorio: 'Cargando directorio…',
     loadingVerificando: 'Verificando credenciales…',
@@ -1625,8 +1648,17 @@ const INTRANET_I18N = {
     modalNuevosProyectos: 'New projects',
     modalDisponible: '✅ Available for new projects',
     modalSinCap: '⏸ No capacity available now',
+    modalDescripcion: 'About the company',
+    modalEspecialidades: 'Specialities',
     modalActividades: 'Activities',
     modalFotos: 'Photos',
+    adminEditarInfo: '✏️ Description & specialities (admin)',
+    adminGuardarInfo: 'Save',
+    adminGuardandoInfo: 'Saving…',
+    adminInfoGuardada: '✓ Saved',
+    adminInfoError: 'Error saving',
+    adminEspPlaceholder: 'Type a speciality and press Enter or comma',
+    adminDescPlaceholder: 'Company description, production process, capabilities…',
     // Loading
     loadingDirectorio: 'Loading directory…',
     loadingVerificando: 'Verifying credentials…',
@@ -2231,6 +2263,12 @@ function openModal(id) {
     <div class="modal-section"><p class="modal-section-title">${tm.modalActividades}</p>
       <div style="display:flex;flex-wrap:wrap;gap:7px">${(e.actividades||[]).map(a => `<span class="act-tag" style="font-size:12px;padding:5px 10px">${a}</span>`).join('')}</div>
     </div>
+    ${e.descripcion ? `<div class="modal-section"><p class="modal-section-title">${tm.modalDescripcion}</p>
+      <p style="font-size:14px;line-height:1.6;color:var(--ink-soft);margin:0">${e.descripcion}</p>
+    </div>` : ''}
+    ${(e.especialidades && e.especialidades.length) ? `<div class="modal-section"><p class="modal-section-title">${tm.modalEspecialidades}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:7px">${e.especialidades.map(s => `<span class="act-tag" style="font-size:12px;padding:5px 10px;background:var(--verde-pale);color:var(--verde)">${s}</span>`).join('')}</div>
+    </div>` : ''}
     ${galeriaHtml}
     ${uploadHtml}`;
   document.getElementById('modalOverlay').classList.add('open');
@@ -2254,10 +2292,31 @@ function buildUploadBlock(e) {
       <div class="img-upload-progress" id="prog-${s.key}"><div class="img-upload-progress-bar" id="progbar-${s.key}"></div></div>
     </div>`;
   }).join('');
+  const tbu = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
+  const descVal = (e.descripcion || '').replace(/"/g, '&quot;');
+  const espArr = Array.isArray(e.especialidades) ? e.especialidades : [];
+  const espChipsHtml = espArr.map(s => `<span class="esp-chip" data-val="${s.replace(/"/g,'&quot;')}">${s}<button class="esp-chip-del" onclick="removeEspChip(this)" title="Quitar">×</button></span>`).join('');
+
   return `<div class="modal-section" style="border-top:1px solid var(--border);margin-top:4px;padding-top:14px">
     <p class="modal-section-title" style="color:var(--ink-soft)">📷 Imágenes (admin)</p>
     <div class="img-upload-grid">${slotsHtml}</div>
     <input type="file" id="fileInputImg" accept="image/jpeg,image/png,image/webp" style="display:none" onchange="onFileSelected(event)">
+  </div>
+  <div class="modal-section" style="border-top:1px solid var(--border);margin-top:4px;padding-top:14px">
+    <p class="modal-section-title" style="color:var(--ink-soft)">${tbu.adminEditarInfo}</p>
+    <div class="info-editor">
+      <p style="font-size:11px;color:var(--ink-soft);margin:0 0 6px">${tbu.modalDescripcion}</p>
+      <textarea id="infoDesc" placeholder="${tbu.adminDescPlaceholder}">${descVal}</textarea>
+      <p style="font-size:11px;color:var(--ink-soft);margin:10px 0 6px">${tbu.modalEspecialidades}</p>
+      <div class="esp-chips" id="espChips" onclick="document.getElementById('espInput').focus()">
+        ${espChipsHtml}
+        <input class="esp-input" id="espInput" placeholder="${tbu.adminEspPlaceholder}" onkeydown="onEspKey(event)">
+      </div>
+      <div class="info-save-row">
+        <button class="btn-info-save" id="btnInfoSave" onclick="guardarInfoEmpresa('${e.id}')">${tbu.adminGuardarInfo}</button>
+        <span class="info-save-status" id="infoSaveStatus"></span>
+      </div>
+    </div>
   </div>`;
 }
 
@@ -2331,6 +2390,76 @@ async function deleteImagen(empresaId, slot) {
 function closeModal(e) { if (e.target === document.getElementById('modalOverlay')) closeModalBtn(); }
 function closeModalBtn() { document.getElementById('modalOverlay').classList.remove('open'); }
 function showContact(id) { const e = empresasData.find(x => x.id === id); if(e) showToast(`📞 ${e.responsable} · ${e.tel} · ${e.email}`); }
+
+// ── Editor de descripción y especialidades (admin) ────────────────────────────
+
+function removeEspChip(btn) {
+  btn.closest('.esp-chip').remove();
+}
+
+function onEspKey(event) {
+  if (event.key === 'Enter' || event.key === ',') {
+    event.preventDefault();
+    const inp = event.target;
+    const val = inp.value.trim().replace(/,$/, '');
+    if (!val) return;
+    addEspChip(val);
+    inp.value = '';
+  } else if (event.key === 'Backspace' && event.target.value === '') {
+    const chips = document.querySelectorAll('#espChips .esp-chip');
+    if (chips.length) chips[chips.length - 1].remove();
+  }
+}
+
+function addEspChip(val) {
+  const container = document.getElementById('espChips');
+  const inp = document.getElementById('espInput');
+  if (!container || !inp) return;
+  const chip = document.createElement('span');
+  chip.className = 'esp-chip';
+  chip.dataset.val = val;
+  chip.innerHTML = `${val}<button class="esp-chip-del" onclick="removeEspChip(this)" title="Quitar">×</button>`;
+  container.insertBefore(chip, inp);
+}
+
+async function guardarInfoEmpresa(empresaId) {
+  const btn = document.getElementById('btnInfoSave');
+  const status = document.getElementById('infoSaveStatus');
+  const descEl = document.getElementById('infoDesc');
+  if (!btn || !descEl) return;
+
+  const tg = INTRANET_I18N[currentLang] || INTRANET_I18N.es;
+  const descripcion = descEl.value.trim();
+  const especialidades = [...document.querySelectorAll('#espChips .esp-chip')].map(c => c.dataset.val).filter(Boolean);
+
+  btn.disabled = true;
+  btn.textContent = tg.adminGuardandoInfo;
+  if (status) status.textContent = '';
+
+  try {
+    await apiFetch(`/empresas/${empresaId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ descripcion, especialidades })
+    });
+    // Actualizar estado local
+    const e = empresasData.find(x => x.id === empresaId);
+    if (e) { e.descripcion = descripcion; e.especialidades = especialidades; }
+    btn.textContent = tg.adminInfoGuardada;
+    if (status) status.textContent = '';
+    showToast('✓ Información actualizada');
+    // Refrescar las tarjetas del directorio
+    renderEmpresas();
+  } catch(err) {
+    btn.textContent = tg.adminGuardarInfo;
+    if (status) { status.textContent = tg.adminInfoError; status.style.color = 'var(--error, #c0392b)'; }
+    showToast('Error al guardar: ' + err.message, true);
+  } finally {
+    btn.disabled = false;
+    if (btn.textContent === tg.adminInfoGuardada) {
+      setTimeout(() => { btn.textContent = tg.adminGuardarInfo; }, 2500);
+    }
+  }
+}
 
 // ── Registro empresa ──────────────────────────────────────────────────────────
 function onTipoChange() {
